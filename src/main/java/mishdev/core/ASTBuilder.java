@@ -1,26 +1,27 @@
 package mishdev.core;
 
-import mishdev.core.analyzer.Analyzer;
-import mishdev.core.analyzer.IAnalyzer;
-import mishdev.core.reader.IReader;
-import mishdev.core.reader.Reader;
+import com.google.common.collect.TreeBasedTable;
 
-import java.util.HashMap;
-import java.util.Map;
+import javax.swing.tree.DefaultMutableTreeNode;
+import javax.swing.tree.DefaultTreeModel;
+import javax.swing.tree.TreeModel;
+import java.util.List;
 
 public class ASTBuilder {
 
-    private IReader reader;
-    private IAnalyzer analyzer;
+    private Reader reader;
+    private Detector detector;
 
     public ASTBuilder() {
         reader = new Reader();
-        analyzer = new Analyzer();
     }
 
-    public Map<String, Map> build(String fileName) {
-        reader.init(fileName);
-        return new HashMap<>();
+    public void build(String fileName) {
+        List<String> programText = reader.read(fileName);
+        detector = new Detector(programText);
+        detector.detect();
+        detector.getStructuredProgram().printAll();
+
     }
 
 }

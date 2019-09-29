@@ -2,6 +2,8 @@ package mishdev;
 
 public class Main {
 
+    private int classField;
+
     private static int fibonacci(final int n) {
         int a = 0;
         int b = 1;

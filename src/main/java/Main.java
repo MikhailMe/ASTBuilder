@@ -3,7 +3,6 @@ import mishdev.core.ASTBuilder;
 public class Main {
 
     public static void main(String[] args) {
-        System.out.println("hello");
-        //new ASTBuilder().build("input.txt");
+        new ASTBuilder().build("src\\main\\resources\\input.txt");
     }
 }
