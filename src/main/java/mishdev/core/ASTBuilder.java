@@ -1,27 +1,31 @@
 package mishdev.core;
 
-import com.google.common.collect.TreeBasedTable;
+import mishdev.core.models.StructuredProgram;
+import org.jetbrains.annotations.NotNull;
 
-import javax.swing.tree.DefaultMutableTreeNode;
-import javax.swing.tree.DefaultTreeModel;
-import javax.swing.tree.TreeModel;
 import java.util.List;
 
 public class ASTBuilder {
 
+    private Node ast;
     private Reader reader;
     private Detector detector;
+    private Analyzer analyzer;
 
-    public ASTBuilder() {
+    public ASTBuilder(@NotNull final String fileName) {
+        ast = new Node();
         reader = new Reader();
-    }
-
-    public void build(String fileName) {
         List<String> programText = reader.read(fileName);
         detector = new Detector(programText);
-        detector.detect();
-        detector.getStructuredProgram().printAll();
+        analyzer = new Analyzer(programText);
+    }
 
+    public Node build() {
+        StructuredProgram sp = detector.detect();
+        ast = analyzer.analyzePackage(sp.filePackage);
+        Node classNode = new Node(ast);
+        ast.children.add(analyzer.analyzeClass(classNode, sp.fileClass));
+        return ast;
     }
 
 }

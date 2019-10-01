@@ -9,14 +9,14 @@ import java.util.List;
 @Data
 public class StructuredProgram {
 
-    public List<ImmutablePair<Integer, Integer>> packages;
-    public List<ImmutablePair<Integer, Integer>> classes;
-    public List<ImmutablePair<Integer, Integer>> fields;
+    public int filePackage;
+    public ImmutablePair<Integer, Integer> fileClass;
+    public List<Integer> fields;
     public List<ImmutablePair<Integer, Integer>> methods;
 
-    {
-        packages = new ArrayList<>();
-        classes = new ArrayList<>();
+    public StructuredProgram() {
+        filePackage = -1;
+        fileClass = ImmutablePair.of(-1, -1);
         fields = new ArrayList<>();
         methods = new ArrayList<>();
     }
@@ -29,18 +29,18 @@ public class StructuredProgram {
     }
 
     public void printPackages() {
-        System.out.println("packages:");
-        packages.forEach(p -> System.out.println("from " + p.left + " to " + p.right));
+        System.out.println("package:");
+        System.out.println("on the " + filePackage);
     }
 
     public void printClasses() {
         System.out.println("classes:");
-        classes.forEach(p -> System.out.println("from " + p.left + " to " + p.right));
+        System.out.println("from " + fileClass.left + " to " + fileClass.right);
     }
 
     public void printFields() {
         System.out.println("fields:");
-        fields.forEach(p -> System.out.println("from " + p.left + " to " + p.right));
+        fields.forEach(field -> System.out.println("on the " + field));
     }
 
     public void printMethods() {
