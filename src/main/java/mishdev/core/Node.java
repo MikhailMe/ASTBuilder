@@ -1,19 +1,19 @@
 package mishdev.core;
 
 import lombok.Data;
-import org.jetbrains.annotations.NotNull;
+import lombok.AllArgsConstructor;
 
 import java.util.ArrayList;
 import java.util.List;
 
 @Data
+@AllArgsConstructor
 public class Node {
 
     public Node parent;
     public List<Node> children;
     public List<Node> parameters;
 
-    @NotNull
     public String name;
 
     public String type;

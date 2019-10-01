@@ -10,7 +10,9 @@ public class Constants {
 
     public static final String EMPTY_SYMBOL = "";
     public static final String SPACE_SYMBOL = " ";
+    public static final String COMMA_SYMBOL = ",";
     public static final String SEMICOLON_SYMBOL = ";";
+    public static final String NEXT_STRING_SYMBOL = "\n";
 
     public static final String BRACKET_ROUND_OPEN = "(";
     public static final String BRACKET_ROUND_CLOSE = ")";
