@@ -11,6 +11,7 @@ public class Constants {
     public static final String EMPTY_SYMBOL = "";
     public static final String SPACE_SYMBOL = " ";
     public static final String COMMA_SYMBOL = ",";
+    public static final String EQUAL_SYMBOL = "=";
     public static final String SEMICOLON_SYMBOL = ";";
     public static final String NEXT_STRING_SYMBOL = "\n";
 
@@ -24,6 +25,8 @@ public class Constants {
     public static final String BRACKET_FIGURE_CLOSE = "}";
 
     public static final String TYPE_VOID = "void";
+    public static final String IDENTIFIER_IF = "if";
+    public static final String IDENTIFIER_ELSE = "else";
     public static final String IDENTIFIER_RETURN = "return";
 
     public static final String KEYWORD_CLASS = "class";
@@ -31,6 +34,7 @@ public class Constants {
     public static final String KEYWORD_METHOD = "method";
     public static final String KEYWORD_PACKAGE = "package";
     public static final String KEYWORD_PARAMETER = "parameter";
+    public static final String KEYWORD_STATEMENT = "statement";
 
     public static final Set<String> MODIFIERS = ImmutableSet.of(
             Modifier.FINAL.toString(),

@@ -1,22 +1,25 @@
 package mishdev.core;
 
 import mishdev.util.Constants;
-import org.apache.commons.lang3.NotImplementedException;
 import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
+import java.util.stream.Collectors;
 
-import static mishdev.util.Constants.BRACKET_FIGURE_CLOSE;
-import static mishdev.util.Constants.BRACKET_FIGURE_OPEN;
 
 public class Analyzer {
+
+    @NotNull
+    private Checker checker;
 
     @NotNull
     private List<String> programText;
 
     public Analyzer(@NotNull final List<String> programText) {
+        this.checker = new Checker();
         this.programText = programText;
     }
 
@@ -24,16 +27,13 @@ public class Analyzer {
     public Node analyzePackage() {
         String[] signature = programText.get(0).split(Constants.SPACE_SYMBOL);
         Node ast = new Node();
-        ast.parent = null;
-        ast.modifiers = null;
         ast.keyWord = signature[0];
         ast.name = signature[1].replace(Constants.SEMICOLON_SYMBOL, Constants.EMPTY_SYMBOL);
         ast.children = new ArrayList<>();
         return ast;
     }
 
-    private void preAnalyzeClass(@NotNull final Node ast,
-                                 final int startClassIndex) {
+    private void preAnalyzeClass(@NotNull final Node ast, final int startClassIndex) {
         String[] signature = programText.get(startClassIndex).split(Constants.SPACE_SYMBOL);
         for (String currentWord : signature) {
             if (Constants.MODIFIERS.contains(currentWord)) {
@@ -59,7 +59,7 @@ public class Analyzer {
                     && classLine.contains(Constants.BRACKET_ROUND_CLOSE)) {
                 Node methodNode = preAnalyzeMethod(classNode, classLine);
                 ImmutablePair<Integer, Integer> methodDiapason = calculateDiapason(index);
-                //analyzeMethod(methodNode, ImmutablePair.of(methodDiapason.left + 1, methodDiapason.right));
+                analyzeMethod(methodNode, ImmutablePair.of(methodDiapason.left + 1, methodDiapason.right));
                 index = methodDiapason.right;
                 classNode.children.add(methodNode);
             }
@@ -139,8 +139,8 @@ public class Analyzer {
         for (int i = index; i < words.length; i++) {
             String currentWord = words[i];
             if (parameter == null) {
-                parameter = new Node(methodNode, null, null, null, null, Constants.KEYWORD_PARAMETER, null);
-                ;
+                parameter = new Node(methodNode);
+                parameter.keyWord = Constants.KEYWORD_PARAMETER;
             }
             if (currentWord.contains(Constants.BRACKET_ROUND_OPEN)) {
                 int bracketIndex = currentWord.indexOf(Constants.BRACKET_ROUND_OPEN);
@@ -167,12 +167,48 @@ public class Analyzer {
     @NotNull
     public Node analyzeMethod(@NotNull final Node classNode,
                               @NotNull final ImmutablePair<Integer, Integer> diapason) {
-        throw new NotImplementedException("method not yet implemented");
+        for (int index = diapason.left; index < diapason.right; index++) {
+            String methodLine = programText.get(index);
+            List<String> lineWords = Arrays
+                    .stream(methodLine.split(Constants.SPACE_SYMBOL))
+                    .filter(x -> !x.isEmpty())
+                    .collect(Collectors.toList());
+            Node node = new Node(classNode);
+            if (checker.isStatement(lineWords)) {
+                node.keyWord = Constants.KEYWORD_STATEMENT;
+                node.type = lineWords.get(0);
+
+                if (lineWords.get(1).contains(Constants.SEMICOLON_SYMBOL)) {
+                    node.name = lineWords.get(1).replace(Constants.SEMICOLON_SYMBOL, Constants.EMPTY_SYMBOL);
+                } else {
+                    node.name = lineWords.get(1);
+                    node.value = lineWords
+                            .get(lineWords.size() - 1)
+                            .replace(Constants.SEMICOLON_SYMBOL, Constants.EMPTY_SYMBOL);
+                }
+            } else if (checker.isCondition(lineWords)) {
+
+            } else if (checker.isCycleFor(lineWords)) {
+
+            } else if (checker.isCycleWhile(lineWords)) {
+
+            } else if (checker.isReturn(lineWords)) {
+                node.keyWord = Constants.IDENTIFIER_RETURN;
+                node.value = lineWords
+                        .get(lineWords.size() - 1)
+                        .replace(Constants.SEMICOLON_SYMBOL, Constants.EMPTY_SYMBOL);
+            }
+
+            if (node.isUsed()) {
+                classNode.children.add(node);
+            }
+        }
+        return classNode;
     }
 
     @NotNull
     private ImmutablePair<Integer, Integer> calculateDiapason(final int startIndex) {
-        if (programText.get(startIndex).contains(BRACKET_FIGURE_CLOSE)) {
+        if (programText.get(startIndex).contains(Constants.BRACKET_FIGURE_CLOSE)) {
             return ImmutablePair.of(startIndex, startIndex);
         }
 
@@ -180,10 +216,10 @@ public class Analyzer {
         int bracketCounter = 0;
         for (int i = startIndex + 1; i < programText.size(); i++) {
             String currentLine = programText.get(i);
-            if (currentLine.contains(BRACKET_FIGURE_OPEN)) {
+            if (currentLine.contains(Constants.BRACKET_FIGURE_OPEN)) {
                 bracketCounter++;
             }
-            if (currentLine.contains(BRACKET_FIGURE_CLOSE)) {
+            if (currentLine.contains(Constants.BRACKET_FIGURE_CLOSE)) {
                 bracketCounter--;
             }
             if (bracketCounter == -1) {

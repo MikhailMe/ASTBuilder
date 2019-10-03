@@ -15,11 +15,9 @@ public class Node {
     public List<Node> parameters;
 
     public String name;
-
     public String type;
-
+    public Object value;
     public String keyWord;
-
     public List<String> modifiers;
 
     public Node() {
@@ -35,9 +33,18 @@ public class Node {
         this.parameters = new ArrayList<>();
     }
 
+    public boolean isUsed() {
+        return !children.isEmpty()
+                || !parameters.isEmpty()
+                || name != null
+                || type != null
+                || value != null
+                || !modifiers.isEmpty();
+    }
+
     @Override
     public String toString() {
-        return  "AST:\n" +
+        return "AST:\n" +
                 "name: " + name + "\n" +
                 "type: " + (type == null ? "null" : type) + "\n" +
                 "keyword: " + keyWord + "\n" +

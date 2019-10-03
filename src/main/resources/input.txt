@@ -8,6 +8,7 @@ public class Main {
         int a = 0;
         int b = 1;
         int c = 0;
+        long variable;
         if (n < 2) {
             return n;
         }
@@ -16,6 +17,8 @@ public class Main {
             a = b;
             b = c;
         }
+        String oops = "3kl4n23lk4n23kl4n3";
+        Object object = new Object();
         return c;
     }
 

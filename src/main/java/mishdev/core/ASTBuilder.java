@@ -19,6 +19,7 @@ public class ASTBuilder {
         analyzer = new Analyzer(programText);
     }
 
+    @NotNull
     public Node build() {
         Node packageNode = analyzer.analyzePackage();
         Node classNode = new Node(packageNode);
