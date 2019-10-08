@@ -4,7 +4,6 @@ import org.jetbrains.annotations.NotNull;
 
 public enum Assigner {
 
-    ASSIGN("="),
     PLUS_EQ("+="),
     MINUS_EQ("-="),
     MULTI_EQ("*="),

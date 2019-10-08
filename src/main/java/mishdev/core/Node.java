@@ -39,6 +39,7 @@ public class Node {
                 || name != null
                 || type != null
                 || value != null
+                || keyWord != null
                 || !modifiers.isEmpty();
     }
 

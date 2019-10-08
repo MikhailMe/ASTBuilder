@@ -5,8 +5,6 @@ import org.jetbrains.annotations.NotNull;
 public enum Arithmetic {
 
     MOD("%"),
-    INC("++"),
-    DEC("--"),
     PLUS("+"),
     MINUS("-"),
     MULTI("*"),

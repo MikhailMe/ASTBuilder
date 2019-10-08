@@ -59,7 +59,7 @@ public class Analyzer {
                     && classLine.contains(Constants.BRACKET_ROUND_CLOSE)) {
                 Node methodNode = preAnalyzeMethod(classNode, classLine);
                 ImmutablePair<Integer, Integer> methodDiapason = calculateDiapason(index);
-                analyzeMethod(methodNode, ImmutablePair.of(methodDiapason.left + 1, methodDiapason.right));
+                analyzeBlock(methodNode, ImmutablePair.of(methodDiapason.left + 1, methodDiapason.right));
                 index = methodDiapason.right;
                 classNode.children.add(methodNode);
             }
@@ -165,45 +165,116 @@ public class Analyzer {
     }
 
     @NotNull
-    public Node analyzeMethod(@NotNull final Node classNode,
-                              @NotNull final ImmutablePair<Integer, Integer> diapason) {
+    public Node analyzeBlock(@NotNull final Node blockNode,
+                             @NotNull final ImmutablePair<Integer, Integer> diapason) {
         for (int index = diapason.left; index < diapason.right; index++) {
             String methodLine = programText.get(index);
             List<String> lineWords = Arrays
                     .stream(methodLine.split(Constants.SPACE_SYMBOL))
                     .filter(x -> !x.isEmpty())
                     .collect(Collectors.toList());
-            Node node = new Node(classNode);
-            if (checker.isStatement(lineWords)) {
-                node.keyWord = Constants.KEYWORD_STATEMENT;
-                node.type = lineWords.get(0);
 
-                if (lineWords.get(1).contains(Constants.SEMICOLON_SYMBOL)) {
-                    node.name = lineWords.get(1).replace(Constants.SEMICOLON_SYMBOL, Constants.EMPTY_SYMBOL);
-                } else {
-                    node.name = lineWords.get(1);
-                    node.value = lineWords
-                            .get(lineWords.size() - 1)
-                            .replace(Constants.SEMICOLON_SYMBOL, Constants.EMPTY_SYMBOL);
-                }
+            Node node = new Node(blockNode);
+            if (checker.isDeclareVariable(lineWords)) {
+                analyzeDeclareVariable(node, lineWords);
+            } else if (checker.isStatement(lineWords)) {
+                analyzeStatement(node, lineWords);
             } else if (checker.isCondition(lineWords)) {
-
+                ImmutablePair<Integer, Integer> conditionDiapason = calculateDiapason(index);
+                Node conditionNode = preAnalyzeCondition(blockNode, lineWords);
+                analyzeBlock(conditionNode, ImmutablePair.of(conditionDiapason.left + 1, conditionDiapason.right));
             } else if (checker.isCycleFor(lineWords)) {
-
-            } else if (checker.isCycleWhile(lineWords)) {
 
             } else if (checker.isReturn(lineWords)) {
                 node.keyWord = Constants.IDENTIFIER_RETURN;
-                node.value = lineWords
-                        .get(lineWords.size() - 1)
-                        .replace(Constants.SEMICOLON_SYMBOL, Constants.EMPTY_SYMBOL);
+                node.value = getValue(lineWords);
             }
 
             if (node.isUsed()) {
-                classNode.children.add(node);
+                blockNode.children.add(node);
             }
         }
-        return classNode;
+        return blockNode;
+    }
+
+    @NotNull
+    private Node preAnalyzeCondition(@NotNull final Node blockNode,
+                                     @NotNull final List<String> lineWords) {
+        Node conditionNode = new Node(blockNode);
+        conditionNode.keyWord = Constants.IDENTIFIER_IF;
+        conditionNode.name = Constants.IDENTIFIER_IF;
+
+        Node compareNode = new Node(conditionNode);
+        compareNode.keyWord = Constants.KEYWORD_EXPRESSION;
+        compareNode.name = lineWords.get(2);
+
+        Node leftCompareNode = new Node(compareNode);
+        leftCompareNode.name = lineWords.get(1).replace(Constants.BRACKET_ROUND_OPEN, Constants.EMPTY_SYMBOL);
+
+        Node rightCompareNode = new Node(compareNode);
+        rightCompareNode.name = lineWords.get(3).replace(Constants.BRACKET_ROUND_CLOSE, Constants.EMPTY_SYMBOL);
+
+        compareNode.children.add(leftCompareNode);
+        compareNode.children.add(rightCompareNode);
+
+        conditionNode.children.add(compareNode);
+
+        return conditionNode;
+    }
+
+    private void analyzeDeclareVariable(@NotNull final Node declareVariableNode,
+                                        @NotNull final List<String> lineWords) {
+        declareVariableNode.keyWord = Constants.KEYWORD_DECLARE_VARIABLE;
+        declareVariableNode.type = lineWords.get(0);
+
+        if (lineWords.get(1).contains(Constants.SEMICOLON_SYMBOL)) {
+            declareVariableNode.name = lineWords.get(1).replace(Constants.SEMICOLON_SYMBOL, Constants.EMPTY_SYMBOL);
+        } else {
+            declareVariableNode.name = lineWords.get(1);
+            declareVariableNode.value = getValue(lineWords);
+        }
+    }
+
+    private void analyzeStatement(@NotNull final Node statementNode,
+                                  @NotNull final List<String> lineWords) {
+        statementNode.keyWord = Constants.KEYWORD_EXPRESSION;
+        statementNode.name = Constants.EQUAL_SYMBOL;
+        if (lineWords.size() == 3) {
+            Node firstChild = new Node(statementNode);
+            firstChild.name = Constants.LEFT_PART;
+            firstChild.value = lineWords.get(0);
+
+            Node secondChild = new Node(statementNode);
+            secondChild.name = Constants.RIGHT_PART;
+            secondChild.value = lineWords.get(2);
+
+            statementNode.children.add(firstChild);
+            statementNode.children.add(secondChild);
+
+        } else if (lineWords.size() == 5) {
+            Node firstChild = new Node(statementNode);
+            firstChild.name = Constants.LEFT_PART;
+            firstChild.value = lineWords.get(0);
+
+            Node secondChild = new Node(statementNode);
+            secondChild.name = Constants.RIGHT_PART;
+            secondChild.value = lineWords.get(3);
+            secondChild.keyWord = Constants.KEYWORD_EXPRESSION;
+
+            Node subFirstChildForSecond = new Node(secondChild);
+            subFirstChildForSecond.name = Constants.LEFT_PART;
+            subFirstChildForSecond.value = lineWords.get(2);
+
+            Node subSecondChildForSecond = new Node(secondChild);
+            subSecondChildForSecond.name = Constants.RIGHT_PART;
+            subSecondChildForSecond.value = getValue(lineWords);
+
+            secondChild.children.add(subFirstChildForSecond);
+            secondChild.children.add(subSecondChildForSecond);
+
+            statementNode.children.add(firstChild);
+            statementNode.children.add(secondChild);
+        }
     }
 
     @NotNull
@@ -233,6 +304,11 @@ public class Analyzer {
         }
 
         return ImmutablePair.of(startIndex, endIndex);
+    }
+
+    @NotNull
+    private String getValue(@NotNull final List<String> words) {
+        return words.get(words.size() - 1).replace(Constants.SEMICOLON_SYMBOL, Constants.EMPTY_SYMBOL);
     }
 
 }
