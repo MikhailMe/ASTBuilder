@@ -7,6 +7,7 @@ import org.jetbrains.annotations.NotNull;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.function.BiFunction;
 import java.util.stream.Collectors;
 
 
@@ -180,11 +181,9 @@ public class Analyzer {
             } else if (checker.isStatement(lineWords)) {
                 analyzeStatement(node, lineWords);
             } else if (checker.isCondition(lineWords)) {
-                ImmutablePair<Integer, Integer> conditionDiapason = calculateDiapason(index);
-                Node conditionNode = preAnalyzeCondition(blockNode, lineWords);
-                analyzeBlock(conditionNode, ImmutablePair.of(conditionDiapason.left + 1, conditionDiapason.right));
+                analyze(index, blockNode, lineWords, this::preAnalyzeCondition);
             } else if (checker.isCycleFor(lineWords)) {
-
+                analyze(index, blockNode, lineWords, this::preAnalyzeCycle);
             } else if (checker.isReturn(lineWords)) {
                 node.keyWord = Constants.IDENTIFIER_RETURN;
                 node.value = getValue(lineWords);
@@ -197,22 +196,80 @@ public class Analyzer {
         return blockNode;
     }
 
+    private void analyze(final int index,
+                         @NotNull final Node blockNode,
+                         @NotNull final List<String> words,
+                         @NotNull BiFunction<Node, List<String>, Node> preAnalyze) {
+        ImmutablePair<Integer, Integer> diapason = calculateDiapason(index);
+        Node conditionNode = preAnalyze.apply(blockNode, words);
+        analyzeBlock(conditionNode, ImmutablePair.of(diapason.left + 1, diapason.right));
+    }
+
+    @NotNull
+    private Node preAnalyzeCycle(@NotNull final Node blockNode,
+                                 @NotNull final List<String> words) {
+        Node cycleNode = new Node(blockNode);
+        cycleNode.keyWord = Constants.KEYWORD_CYCLE;
+        cycleNode.name = words.get(0);
+
+        // (int i = 0;
+
+        Node declareCycleVariableChild = new Node(cycleNode);
+        declareCycleVariableChild.keyWord = Constants.KEYWORD_DECLARE_VARIABLE;
+        declareCycleVariableChild.name = words.get(3);
+
+        Node leftDeclareVariableChild = new Node(declareCycleVariableChild);
+        leftDeclareVariableChild.type =  words.get(1).substring(1, words.get(1).length() - 1);
+        leftDeclareVariableChild.name = words.get(2);
+        leftDeclareVariableChild.keyWord = Constants.KEYWORD_STATEMENT;
+
+        Node rightDeclareVariableChild = new Node(declareCycleVariableChild);
+        rightDeclareVariableChild.value = words.get(4).substring(0, words.get(4).length() - 2);
+        rightDeclareVariableChild.keyWord = Constants.KEYWORD_STATEMENT;
+
+        declareCycleVariableChild.children.add(leftDeclareVariableChild);
+        declareCycleVariableChild.children.add(rightDeclareVariableChild);
+
+        cycleNode.children.add(declareCycleVariableChild);
+
+        // a < b;
+        Node cycleCondition = new Node(cycleNode);
+        cycleCondition.keyWord = Constants.KEYWORD_CONDITION;
+        cycleCondition.name = words.get(6);
+
+        Node leftCycleCondition = new Node(cycleCondition);
+        leftCycleCondition.name = words.get(5);
+
+        Node rightCycleCondition = new Node(cycleCondition);
+        rightCycleCondition.name = words.get(7).substring(1, words.get(7).length() - 1);
+
+        cycleCondition.children.add(leftCycleCondition);
+        cycleCondition.children.add(rightCycleCondition);
+
+        cycleNode.children.add(cycleCondition);
+
+        // a++)
+
+
+        return cycleNode;
+    }
+
     @NotNull
     private Node preAnalyzeCondition(@NotNull final Node blockNode,
-                                     @NotNull final List<String> lineWords) {
+                                     @NotNull final List<String> words) {
         Node conditionNode = new Node(blockNode);
         conditionNode.keyWord = Constants.IDENTIFIER_IF;
         conditionNode.name = Constants.IDENTIFIER_IF;
 
         Node compareNode = new Node(conditionNode);
         compareNode.keyWord = Constants.KEYWORD_EXPRESSION;
-        compareNode.name = lineWords.get(2);
+        compareNode.name = words.get(2);
 
         Node leftCompareNode = new Node(compareNode);
-        leftCompareNode.name = lineWords.get(1).replace(Constants.BRACKET_ROUND_OPEN, Constants.EMPTY_SYMBOL);
+        leftCompareNode.name = words.get(1).replace(Constants.BRACKET_ROUND_OPEN, Constants.EMPTY_SYMBOL);
 
         Node rightCompareNode = new Node(compareNode);
-        rightCompareNode.name = lineWords.get(3).replace(Constants.BRACKET_ROUND_CLOSE, Constants.EMPTY_SYMBOL);
+        rightCompareNode.name = words.get(3).replace(Constants.BRACKET_ROUND_CLOSE, Constants.EMPTY_SYMBOL);
 
         compareNode.children.add(leftCompareNode);
         compareNode.children.add(rightCompareNode);
@@ -223,51 +280,51 @@ public class Analyzer {
     }
 
     private void analyzeDeclareVariable(@NotNull final Node declareVariableNode,
-                                        @NotNull final List<String> lineWords) {
+                                        @NotNull final List<String> words) {
         declareVariableNode.keyWord = Constants.KEYWORD_DECLARE_VARIABLE;
-        declareVariableNode.type = lineWords.get(0);
+        declareVariableNode.type = words.get(0);
 
-        if (lineWords.get(1).contains(Constants.SEMICOLON_SYMBOL)) {
-            declareVariableNode.name = lineWords.get(1).replace(Constants.SEMICOLON_SYMBOL, Constants.EMPTY_SYMBOL);
+        if (words.get(1).contains(Constants.SEMICOLON_SYMBOL)) {
+            declareVariableNode.name = words.get(1).replace(Constants.SEMICOLON_SYMBOL, Constants.EMPTY_SYMBOL);
         } else {
-            declareVariableNode.name = lineWords.get(1);
-            declareVariableNode.value = getValue(lineWords);
+            declareVariableNode.name = words.get(1);
+            declareVariableNode.value = getValue(words);
         }
     }
 
     private void analyzeStatement(@NotNull final Node statementNode,
-                                  @NotNull final List<String> lineWords) {
+                                  @NotNull final List<String> words) {
         statementNode.keyWord = Constants.KEYWORD_EXPRESSION;
         statementNode.name = Constants.EQUAL_SYMBOL;
-        if (lineWords.size() == 3) {
+        if (words.size() == 3) {
             Node firstChild = new Node(statementNode);
             firstChild.name = Constants.LEFT_PART;
-            firstChild.value = lineWords.get(0);
+            firstChild.value = words.get(0);
 
             Node secondChild = new Node(statementNode);
             secondChild.name = Constants.RIGHT_PART;
-            secondChild.value = lineWords.get(2);
+            secondChild.value = words.get(2);
 
             statementNode.children.add(firstChild);
             statementNode.children.add(secondChild);
 
-        } else if (lineWords.size() == 5) {
+        } else if (words.size() == 5) {
             Node firstChild = new Node(statementNode);
             firstChild.name = Constants.LEFT_PART;
-            firstChild.value = lineWords.get(0);
+            firstChild.value = words.get(0);
 
             Node secondChild = new Node(statementNode);
             secondChild.name = Constants.RIGHT_PART;
-            secondChild.value = lineWords.get(3);
+            secondChild.value = words.get(3);
             secondChild.keyWord = Constants.KEYWORD_EXPRESSION;
 
             Node subFirstChildForSecond = new Node(secondChild);
             subFirstChildForSecond.name = Constants.LEFT_PART;
-            subFirstChildForSecond.value = lineWords.get(2);
+            subFirstChildForSecond.value = words.get(2);
 
             Node subSecondChildForSecond = new Node(secondChild);
             subSecondChildForSecond.name = Constants.RIGHT_PART;
-            subSecondChildForSecond.value = getValue(lineWords);
+            subSecondChildForSecond.value = getValue(words);
 
             secondChild.children.add(subFirstChildForSecond);
             secondChild.children.add(subSecondChildForSecond);

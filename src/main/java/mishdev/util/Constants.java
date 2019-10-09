@@ -36,11 +36,13 @@ public class Constants {
     public static final String IDENTIFIER_ELSE = "else";
     public static final String IDENTIFIER_RETURN = "return";
 
+    public static final String KEYWORD_CYCLE = "cycle";
     public static final String KEYWORD_CLASS = "class";
     public static final String KEYWORD_FIELD = "field";
     public static final String KEYWORD_METHOD = "method";
     public static final String KEYWORD_PACKAGE = "package";
     public static final String KEYWORD_COMMAND = "command";
+    public static final String KEYWORD_CONDITION = "condition";
     public static final String KEYWORD_PARAMETER = "parameter";
     public static final String KEYWORD_STATEMENT = "statement";
     public static final String KEYWORD_EXPRESSION = "expression";

@@ -4,6 +4,8 @@ import mishdev.util.Constants;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 public class Checker {
 
@@ -15,12 +17,17 @@ public class Checker {
 
     boolean isStatement(@NotNull final List<String> words) {
         // first variable, equal_symbol, second variable
-        return words.contains(Constants.EQUAL_SYMBOL) && words.size() >= 3;
+        return words.contains(Constants.EQUAL_SYMBOL)
+                && words.get(words.size() - 1)
+                .chars().mapToObj(c -> (char) c)
+                .collect(Collectors.toList())
+                .contains(Constants.SEMICOLON_SYMBOL.charAt(0))
+                && words.size() >= 3;
     }
 
-    // TODO: 10/9/2019
     boolean isCycleFor(@NotNull final List<String> words) {
-        return words.contains(Constants.IDENTIFIER_FOR);
+        return words.contains(Constants.IDENTIFIER_FOR)
+                && hasElementInCollection(words, Constants.COMPARISON_OPERATORS);
     }
 
     boolean isCondition(@NotNull final List<String> words) {
@@ -32,4 +39,8 @@ public class Checker {
         return words.contains(Constants.IDENTIFIER_RETURN);
     }
 
+    private boolean hasElementInCollection(@NotNull final List<String> collection,
+                                           @NotNull final Set<String> checkSet) {
+        return collection.stream().anyMatch(checkSet::contains);
+    }
 }
