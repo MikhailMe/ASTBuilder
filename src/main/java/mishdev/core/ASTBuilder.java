@@ -6,25 +6,20 @@ import java.util.List;
 
 public class ASTBuilder {
 
-    private Reader reader;
+    @NotNull
     private Analyzer analyzer;
 
-    public ASTBuilder(@NotNull final String fileName) {
-        reader = new Reader();
-        analyzer = new Analyzer(reader.read(fileName));
+    public ASTBuilder(@NotNull final String pathToProgram) {
+        this.analyzer = new Analyzer(new Reader().read(pathToProgram));
     }
 
-    public ASTBuilder(@NotNull final List<String> programText) {
-        reader = new Reader();
-        analyzer = new Analyzer(programText);
+    public ASTBuilder(@NotNull final List<String> program) {
+        this.analyzer = new Analyzer(program);
     }
 
     @NotNull
     public Node build() {
-        Node packageNode = analyzer.analyzePackage();
-        Node classNode = new Node(packageNode);
-        packageNode.children.add(analyzer.analyzeClass(classNode));
-        return packageNode;
+        return this.analyzer.analyzeProgram();
     }
 
 }

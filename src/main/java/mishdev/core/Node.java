@@ -2,6 +2,7 @@ package mishdev.core;
 
 import lombok.Data;
 import lombok.AllArgsConstructor;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -20,20 +21,29 @@ public class Node {
     public String keyWord;
     public List<String> modifiers;
 
-    public Node() {
+    Node() {
         this.children = new ArrayList<>();
         this.modifiers = new ArrayList<>();
         this.parameters = new ArrayList<>();
     }
 
-    public Node(final Node parent) {
+    Node(final Node parent) {
         this.parent = parent;
         this.children = new ArrayList<>();
         this.modifiers = new ArrayList<>();
         this.parameters = new ArrayList<>();
     }
 
-    public boolean isUsed() {
+    Node(final Node parent,
+         @NotNull final String keyWord) {
+        this.parent = parent;
+        this.keyWord = keyWord;
+        this.children = new ArrayList<>();
+        this.modifiers = new ArrayList<>();
+        this.parameters = new ArrayList<>();
+    }
+
+    boolean isUsed() {
         return !children.isEmpty()
                 || !parameters.isEmpty()
                 || name != null

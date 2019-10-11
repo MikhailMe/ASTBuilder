@@ -4,62 +4,72 @@ import mishdev.util.Constants;
 import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.ArrayList;
+import java.security.InvalidParameterException;
 import java.util.Arrays;
 import java.util.List;
 import java.util.function.BiFunction;
 import java.util.stream.Collectors;
 
 
-public class Analyzer {
+class Analyzer {
+
+    @NotNull
+    private Helper helper;
 
     @NotNull
     private Checker checker;
 
     @NotNull
+    private PreAnalyzer preAnalyzer;
+
+    @NotNull
     private List<String> programText;
 
-    public Analyzer(@NotNull final List<String> programText) {
+    Analyzer(@NotNull final List<String> programText) {
+        this.helper = new Helper();
         this.checker = new Checker();
         this.programText = programText;
+        this.preAnalyzer = new PreAnalyzer();
     }
 
     @NotNull
-    public Node analyzePackage() {
-        String[] signature = programText.get(0).split(Constants.SPACE_SYMBOL);
-        Node ast = new Node();
-        ast.keyWord = signature[0];
-        ast.name = signature[1].replace(Constants.SEMICOLON_SYMBOL, Constants.EMPTY_SYMBOL);
-        ast.children = new ArrayList<>();
-        return ast;
+    Node analyzeProgram() {
+        return analyzePackage();
     }
 
-    private void preAnalyzeClass(@NotNull final Node ast, final int startClassIndex) {
-        String[] signature = programText.get(startClassIndex).split(Constants.SPACE_SYMBOL);
-        for (String currentWord : signature) {
-            if (Constants.MODIFIERS.contains(currentWord)) {
-                ast.modifiers.add(currentWord);
-            } else if (Constants.KEYWORD_CLASS.equals(currentWord)) {
-                ast.keyWord = currentWord;
-            } else if (!currentWord.equals(Constants.BRACKET_FIGURE_OPEN)) {
-                ast.name = currentWord;
-            }
+    @NotNull
+    private Node analyzePackage() {
+        List<String> packageWords = Arrays
+                .stream(programText.get(0).split(Constants.SPACE_SYMBOL))
+                .collect(Collectors.toList());
+        if (!checker.isPackage(packageWords)) {
+            throw new InvalidParameterException("This is not package line");
         }
-        ast.children = new ArrayList<>();
+        Node packageNode = preAnalyzer.preAnalyzePackage(packageWords);
+        Node classNode = new Node(packageNode);
+        analyzeClass(classNode);
+        packageNode.children.add(classNode);
+        return packageNode;
     }
 
-    @NotNull
-    public Node analyzeClass(@NotNull final Node classNode) {
-        ImmutablePair<Integer, Integer> diapason = calculateDiapason(1);
-        preAnalyzeClass(classNode, diapason.left);
+    private void analyzeClass(@NotNull final Node classNode) {
+        int startIndex = 1;
+        ImmutablePair<Integer, Integer> diapason = helper.calculateDiapason(startIndex, programText);
+        List<String> classWords = Arrays
+                .stream(programText.get(startIndex).split(Constants.SPACE_SYMBOL))
+                .collect(Collectors.toList());
+        if (!checker.isClass(classWords)) {
+            throw new InvalidParameterException("This is not class line");
+        }
+        preAnalyzer.preAnalyzeClass(classNode, classWords);
         for (int index = diapason.left + 1; index < diapason.right; index++) {
             String classLine = programText.get(index);
             // method detect
             if (classLine.contains(Constants.BRACKET_FIGURE_OPEN)
                     && classLine.contains(Constants.BRACKET_ROUND_OPEN)
                     && classLine.contains(Constants.BRACKET_ROUND_CLOSE)) {
-                Node methodNode = preAnalyzeMethod(classNode, classLine);
-                ImmutablePair<Integer, Integer> methodDiapason = calculateDiapason(index);
+                Node methodNode = preAnalyzer.preAnalyzeMethod(classNode, classLine);
+                ImmutablePair<Integer, Integer> methodDiapason = helper.calculateDiapason(index, programText);
                 analyzeBlock(methodNode, ImmutablePair.of(methodDiapason.left + 1, methodDiapason.right));
                 index = methodDiapason.right;
                 classNode.children.add(methodNode);
@@ -70,15 +80,16 @@ public class Analyzer {
                 classNode.children.add(fieldNode);
             }
         }
-        return classNode;
     }
 
     @NotNull
     private Node analyzeField(@NotNull final Node classNode,
                               @NotNull final String classLine) {
-        Node fieldNode = new Node(classNode);
-        fieldNode.keyWord = Constants.KEYWORD_FIELD;
-        String[] words = classLine.split(Constants.SPACE_SYMBOL);
+        Node fieldNode = new Node(classNode, Constants.KEYWORD_FIELD);
+        List<String> words = Arrays
+                .stream(classLine.split(Constants.SPACE_SYMBOL))
+                .filter(word -> !word.isEmpty())
+                .collect(Collectors.toList());
         for (String currentWord : words) {
             if (currentWord.isEmpty()) {
                 continue;
@@ -91,83 +102,15 @@ public class Analyzer {
                 fieldNode.type = currentWord;
             } else if (!Constants.PRIMITIVE_TYPES.contains(currentWord)
                     && Character.isLowerCase(currentWord.charAt(0))) {
-                fieldNode.name = currentWord.replace(Constants.SEMICOLON_SYMBOL, "");
+                fieldNode.name = currentWord.replace(Constants.SEMICOLON_SYMBOL, Constants.EMPTY_SYMBOL);
             }
         }
         fieldNode.children = null;
         return fieldNode;
     }
 
-    @NotNull
-    private Node preAnalyzeMethod(@NotNull final Node classNode,
-                                  @NotNull final String classLine) {
-        Node methodNode = new Node(classNode);
-        methodNode.keyWord = Constants.KEYWORD_METHOD;
-        String[] words = classLine.split(Constants.SPACE_SYMBOL);
-        for (int index = 0; index < words.length; index++) {
-            String currentWord = words[index];
-            if (currentWord.isEmpty()) {
-                continue;
-            }
-            if (Constants.MODIFIERS.contains(currentWord)) {
-                methodNode.modifiers.add(currentWord);
-            } else if (Constants.PRIMITIVE_TYPES.contains(currentWord)
-                    || Constants.TYPE_VOID.equals(currentWord)
-                    || Character.isUpperCase(currentWord.charAt(0))) {
-                methodNode.type = currentWord;
-            } else if (!Constants.PRIMITIVE_TYPES.contains(currentWord)
-                    && Character.isLowerCase(currentWord.charAt(0))) {
-                if (currentWord.contains(Constants.BRACKET_ROUND_OPEN)) {
-                    int bracketIndex = currentWord.indexOf(Constants.BRACKET_ROUND_OPEN);
-                    methodNode.name = currentWord.substring(0, bracketIndex);
-                    if (!currentWord.contains(Constants.BRACKET_ROUND_CLOSE)) {
-                        methodNode.parameters = analyzeMethodParameters(index, words, methodNode);
-                        break;
-                    }
-                }
-            }
-        }
-
-        return methodNode;
-    }
-
-    @NotNull
-    private List<Node> analyzeMethodParameters(final int index,
-                                               @NotNull final String[] words,
-                                               @NotNull final Node methodNode) {
-        List<Node> parameters = new ArrayList<>();
-        Node parameter = null;
-        for (int i = index; i < words.length; i++) {
-            String currentWord = words[i];
-            if (parameter == null) {
-                parameter = new Node(methodNode);
-                parameter.keyWord = Constants.KEYWORD_PARAMETER;
-            }
-            if (currentWord.contains(Constants.BRACKET_ROUND_OPEN)) {
-                int bracketIndex = currentWord.indexOf(Constants.BRACKET_ROUND_OPEN);
-                String parsedWord = currentWord.substring(bracketIndex + 1);
-                if (Constants.PRIMITIVE_TYPES.contains(parsedWord) || Character.isUpperCase(parsedWord.charAt(0))) {
-                    parameter.type = parsedWord;
-                }
-            } else if (Constants.PRIMITIVE_TYPES.contains(currentWord) || Character.isUpperCase(currentWord.charAt(0))) {
-                parameter.type = currentWord;
-            } else if (currentWord.contains(Constants.COMMA_SYMBOL)) {
-                parameter.name = currentWord.substring(0, currentWord.indexOf(Constants.COMMA_SYMBOL));
-            } else if (currentWord.contains(Constants.BRACKET_ROUND_CLOSE)) {
-                parameter.name = currentWord.substring(0, currentWord.indexOf(Constants.BRACKET_ROUND_CLOSE));
-            }
-
-            if (parameter.name != null && parameter.type != null) {
-                parameters.add(parameter);
-                parameter = null;
-            }
-        }
-        return parameters;
-    }
-
-    @NotNull
-    public Node analyzeBlock(@NotNull final Node blockNode,
-                             @NotNull final ImmutablePair<Integer, Integer> diapason) {
+    private void analyzeBlock(@NotNull final Node blockNode,
+                              @NotNull final ImmutablePair<Integer, Integer> diapason) {
         for (int index = diapason.left; index < diapason.right; index++) {
             String methodLine = programText.get(index);
             List<String> lineWords = Arrays
@@ -180,103 +123,103 @@ public class Analyzer {
                 analyzeDeclareVariable(node, lineWords);
             } else if (checker.isStatement(lineWords)) {
                 analyzeStatement(node, lineWords);
-            } else if (checker.isCondition(lineWords)) {
-                analyze(index, blockNode, lineWords, this::preAnalyzeCondition);
+            } else if (checker.isConditionStatement(lineWords)) {
+                index = analyze(index, blockNode, lineWords, this::preAnalyzeConditionStatement);
             } else if (checker.isCycleFor(lineWords)) {
-                analyze(index, blockNode, lineWords, this::preAnalyzeCycle);
+                index = analyze(index, blockNode, lineWords, this::preAnalyzeCycle);
             } else if (checker.isReturn(lineWords)) {
                 node.keyWord = Constants.IDENTIFIER_RETURN;
-                node.value = getValue(lineWords);
+                node.value = helper.getValue(lineWords);
             }
 
             if (node.isUsed()) {
                 blockNode.children.add(node);
             }
         }
-        return blockNode;
-    }
-
-    private void analyze(final int index,
-                         @NotNull final Node blockNode,
-                         @NotNull final List<String> words,
-                         @NotNull BiFunction<Node, List<String>, Node> preAnalyze) {
-        ImmutablePair<Integer, Integer> diapason = calculateDiapason(index);
-        Node conditionNode = preAnalyze.apply(blockNode, words);
-        analyzeBlock(conditionNode, ImmutablePair.of(diapason.left + 1, diapason.right));
     }
 
     @NotNull
     private Node preAnalyzeCycle(@NotNull final Node blockNode,
                                  @NotNull final List<String> words) {
-        Node cycleNode = new Node(blockNode);
-        cycleNode.keyWord = Constants.KEYWORD_CYCLE;
+        Node cycleNode = new Node(blockNode, Constants.KEYWORD_CYCLE);
         cycleNode.name = words.get(0);
 
-        // (int i = 0;
+        String cycleString = String.join(Constants.SPACE_SYMBOL, words);
+        int firstIndex = cycleString.indexOf(Constants.BRACKET_ROUND_OPEN);
+        int lastIndex = cycleString.lastIndexOf(Constants.BRACKET_ROUND_CLOSE);
 
-        Node declareCycleVariableChild = new Node(cycleNode);
-        declareCycleVariableChild.keyWord = Constants.KEYWORD_DECLARE_VARIABLE;
-        declareCycleVariableChild.name = words.get(3);
+        String cycleBody = cycleString.substring(firstIndex + 1, lastIndex);
+        String[] tokens = cycleBody.split(Constants.SEMICOLON_SYMBOL);
 
-        Node leftDeclareVariableChild = new Node(declareCycleVariableChild);
-        leftDeclareVariableChild.type =  words.get(1).substring(1, words.get(1).length() - 1);
-        leftDeclareVariableChild.name = words.get(2);
-        leftDeclareVariableChild.keyWord = Constants.KEYWORD_STATEMENT;
-
-        Node rightDeclareVariableChild = new Node(declareCycleVariableChild);
-        rightDeclareVariableChild.value = words.get(4).substring(0, words.get(4).length() - 2);
-        rightDeclareVariableChild.keyWord = Constants.KEYWORD_STATEMENT;
-
-        declareCycleVariableChild.children.add(leftDeclareVariableChild);
-        declareCycleVariableChild.children.add(rightDeclareVariableChild);
-
-        cycleNode.children.add(declareCycleVariableChild);
-
-        // a < b;
-        Node cycleCondition = new Node(cycleNode);
-        cycleCondition.keyWord = Constants.KEYWORD_CONDITION;
-        cycleCondition.name = words.get(6);
-
-        Node leftCycleCondition = new Node(cycleCondition);
-        leftCycleCondition.name = words.get(5);
-
-        Node rightCycleCondition = new Node(cycleCondition);
-        rightCycleCondition.name = words.get(7).substring(1, words.get(7).length() - 1);
-
-        cycleCondition.children.add(leftCycleCondition);
-        cycleCondition.children.add(rightCycleCondition);
-
-        cycleNode.children.add(cycleCondition);
-
-        // a++)
-
-
+        for (String token : tokens) {
+            Node childNode = new Node(cycleNode);
+            analyzeToken(childNode, Arrays
+                    .stream(token.split(Constants.SPACE_SYMBOL))
+                    .filter(word -> !word.isEmpty())
+                    .collect(Collectors.toList()));
+            cycleNode.parameters.add(childNode);
+        }
         return cycleNode;
     }
 
     @NotNull
-    private Node preAnalyzeCondition(@NotNull final Node blockNode,
-                                     @NotNull final List<String> words) {
-        Node conditionNode = new Node(blockNode);
-        conditionNode.keyWord = Constants.IDENTIFIER_IF;
-        conditionNode.name = Constants.IDENTIFIER_IF;
+    private Node preAnalyzeConditionStatement(@NotNull final Node blockNode,
+                                              @NotNull final List<String> words) {
+        Node simpleConditionNode = new Node(blockNode, Constants.IDENTIFIER_IF);
+        simpleConditionNode.name = Constants.IDENTIFIER_IF;
 
-        Node compareNode = new Node(conditionNode);
-        compareNode.keyWord = Constants.KEYWORD_EXPRESSION;
-        compareNode.name = words.get(2);
+        String conditionString = String.join(Constants.SPACE_SYMBOL, words);
+        int firstIndex = conditionString.indexOf(Constants.BRACKET_ROUND_OPEN);
+        int lastIndex = conditionString.lastIndexOf(Constants.BRACKET_ROUND_CLOSE);
 
-        Node leftCompareNode = new Node(compareNode);
-        leftCompareNode.name = words.get(1).replace(Constants.BRACKET_ROUND_OPEN, Constants.EMPTY_SYMBOL);
+        String condition = conditionString.substring(firstIndex + 1, lastIndex);
+        analyzeSimpleCondition(simpleConditionNode, Arrays
+                .stream(condition.split(Constants.SPACE_SYMBOL))
+                .collect(Collectors.toList()), true);
 
-        Node rightCompareNode = new Node(compareNode);
-        rightCompareNode.name = words.get(3).replace(Constants.BRACKET_ROUND_CLOSE, Constants.EMPTY_SYMBOL);
+        return simpleConditionNode;
+    }
 
-        compareNode.children.add(leftCompareNode);
-        compareNode.children.add(rightCompareNode);
+    private void analyzeToken(@NotNull final Node node,
+                              @NotNull final List<String> words) {
+        if (checker.isDeclareVariable(words)) {
+            analyzeDeclareVariable(node, words);
+        } else if (checker.isStatement(words)) {
+            analyzeStatement(node, words);
+        } else if (checker.isSimpleCondition(words)) {
+            analyzeSimpleCondition(node, words, false);
+        }
+    }
 
-        conditionNode.children.add(compareNode);
+    // BASE METHODS
 
-        return conditionNode;
+    private void analyzeSimpleCondition(@NotNull final Node conditionStatement,
+                                        @NotNull final List<String> words,
+                                        boolean toParameters) {
+        if (toParameters) {
+            Node conditionSimpleNode = new Node(conditionStatement, Constants.KEYWORD_CONDITION);
+            conditionSimpleNode.name = words.get(1);
+
+            Node left = new Node(conditionSimpleNode, Constants.LEFT_PART);
+            left.name = words.get(0);
+
+            Node right = new Node(conditionSimpleNode, Constants.RIGHT_PART);
+            right.name = words.get(2);
+
+            conditionSimpleNode.children.addAll(List.of(left, right));
+            conditionStatement.parameters.add(conditionSimpleNode);
+        } else {
+            conditionStatement.name = words.get(1);
+            conditionStatement.keyWord = Constants.KEYWORD_CONDITION;
+
+            Node left = new Node(conditionStatement, Constants.LEFT_PART);
+            left.name = words.get(0);
+
+            Node right = new Node(conditionStatement, Constants.RIGHT_PART);
+            right.name = words.get(2);
+
+            conditionStatement.children.addAll(List.of(left, right));
+        }
     }
 
     private void analyzeDeclareVariable(@NotNull final Node declareVariableNode,
@@ -288,84 +231,58 @@ public class Analyzer {
             declareVariableNode.name = words.get(1).replace(Constants.SEMICOLON_SYMBOL, Constants.EMPTY_SYMBOL);
         } else {
             declareVariableNode.name = words.get(1);
-            declareVariableNode.value = getValue(words);
+            declareVariableNode.value = helper.getValue(words);
         }
     }
 
+    // TODO: rewrite method
     private void analyzeStatement(@NotNull final Node statementNode,
                                   @NotNull final List<String> words) {
         statementNode.keyWord = Constants.KEYWORD_EXPRESSION;
         statementNode.name = Constants.EQUAL_SYMBOL;
         if (words.size() == 3) {
-            Node firstChild = new Node(statementNode);
-            firstChild.name = Constants.LEFT_PART;
-            firstChild.value = words.get(0);
+            Node leftChild = new Node(statementNode);
+            leftChild.value = words.get(0);
+            leftChild.keyWord = Constants.LEFT_PART;
 
-            Node secondChild = new Node(statementNode);
-            secondChild.name = Constants.RIGHT_PART;
-            secondChild.value = words.get(2);
+            Node rightChild = new Node(statementNode);
+            rightChild.value = helper.getValue(words);
+            rightChild.keyWord = Constants.RIGHT_PART;
 
-            statementNode.children.add(firstChild);
-            statementNode.children.add(secondChild);
+            statementNode.children.add(leftChild);
+            statementNode.children.add(rightChild);
 
         } else if (words.size() == 5) {
-            Node firstChild = new Node(statementNode);
-            firstChild.name = Constants.LEFT_PART;
-            firstChild.value = words.get(0);
+            Node leftChild = new Node(statementNode);
+            leftChild.value = words.get(0);
+            leftChild.keyWord = Constants.LEFT_PART;
 
-            Node secondChild = new Node(statementNode);
-            secondChild.name = Constants.RIGHT_PART;
-            secondChild.value = words.get(3);
-            secondChild.keyWord = Constants.KEYWORD_EXPRESSION;
+            Node rightChild = new Node(statementNode);
+            rightChild.value = words.get(3);
+            rightChild.keyWord = Constants.RIGHT_PART;
 
-            Node subFirstChildForSecond = new Node(secondChild);
-            subFirstChildForSecond.name = Constants.LEFT_PART;
-            subFirstChildForSecond.value = words.get(2);
+            Node leftRightChild = new Node(rightChild);
+            leftRightChild.value = words.get(2);
+            leftRightChild.keyWord = Constants.LEFT_PART;
 
-            Node subSecondChildForSecond = new Node(secondChild);
-            subSecondChildForSecond.name = Constants.RIGHT_PART;
-            subSecondChildForSecond.value = getValue(words);
+            Node rightRightChild = new Node(rightChild);
+            rightRightChild.value = helper.getValue(words);
+            rightRightChild.keyWord = Constants.RIGHT_PART;
 
-            secondChild.children.add(subFirstChildForSecond);
-            secondChild.children.add(subSecondChildForSecond);
+            rightChild.children.addAll(List.of(leftRightChild, rightRightChild));
 
-            statementNode.children.add(firstChild);
-            statementNode.children.add(secondChild);
+            statementNode.children.addAll(List.of(leftChild, rightChild));
         }
     }
 
-    @NotNull
-    private ImmutablePair<Integer, Integer> calculateDiapason(final int startIndex) {
-        if (programText.get(startIndex).contains(Constants.BRACKET_FIGURE_CLOSE)) {
-            return ImmutablePair.of(startIndex, startIndex);
-        }
-
-        int endIndex = -1;
-        int bracketCounter = 0;
-        for (int i = startIndex + 1; i < programText.size(); i++) {
-            String currentLine = programText.get(i);
-            if (currentLine.contains(Constants.BRACKET_FIGURE_OPEN)) {
-                bracketCounter++;
-            }
-            if (currentLine.contains(Constants.BRACKET_FIGURE_CLOSE)) {
-                bracketCounter--;
-            }
-            if (bracketCounter == -1) {
-                endIndex = i;
-                break;
-            }
-        }
-
-        if (endIndex == -1) {
-            throw new IllegalArgumentException("Can't found end of class/method");
-        }
-
-        return ImmutablePair.of(startIndex, endIndex);
+    private int analyze(final int index,
+                        @NotNull final Node blockNode,
+                        @NotNull final List<String> words,
+                        @NotNull BiFunction<Node, List<String>, Node> preAnalyze) {
+        ImmutablePair<Integer, Integer> diapason = helper.calculateDiapason(index, programText);
+        Node node = preAnalyze.apply(blockNode, words);
+        analyzeBlock(node, ImmutablePair.of(diapason.left + 1, diapason.right));
+        blockNode.children.add(node);
+        return diapason.right;
     }
-
-    @NotNull
-    private String getValue(@NotNull final List<String> words) {
-        return words.get(words.size() - 1).replace(Constants.SEMICOLON_SYMBOL, Constants.EMPTY_SYMBOL);
-    }
-
 }

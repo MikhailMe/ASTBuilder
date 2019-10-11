@@ -5,23 +5,31 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
 import java.util.Set;
-import java.util.stream.Collectors;
 
-public class Checker {
+class Checker {
+
+    boolean isPackage(@NotNull final List<String> words) {
+        return words.contains(Constants.KEYWORD_PACKAGE);
+    }
+
+    boolean isClass(@NotNull final List<String> words) {
+        return words.contains(Constants.KEYWORD_CLASS);
+    }
 
     boolean isDeclareVariable(@NotNull final List<String> words) {
         return (Constants.PRIMITIVE_TYPES.contains(words.get(0)) ||
-                Character.isUpperCase(words.get(0).charAt(0)))
-                && words.get(words.size() - 1).contains(Constants.SEMICOLON_SYMBOL);
+                Character.isUpperCase(words.get(0).charAt(0)));
     }
 
+    boolean isSimpleCondition(@NotNull final List<String> words) {
+        return hasElementInCollection(words, Constants.COMPARISON_OPERATORS) && words.size() == 3;
+    }
+
+    // TODO: need support increment ++
     boolean isStatement(@NotNull final List<String> words) {
-        // first variable, equal_symbol, second variable
         return words.contains(Constants.EQUAL_SYMBOL)
-                && words.get(words.size() - 1)
-                .chars().mapToObj(c -> (char) c)
-                .collect(Collectors.toList())
-                .contains(Constants.SEMICOLON_SYMBOL.charAt(0))
+                && !words.contains(Constants.IDENTIFIER_FOR)
+                && !words.contains(Constants.IDENTIFIER_IF)
                 && words.size() >= 3;
     }
 
@@ -30,7 +38,7 @@ public class Checker {
                 && hasElementInCollection(words, Constants.COMPARISON_OPERATORS);
     }
 
-    boolean isCondition(@NotNull final List<String> words) {
+    boolean isConditionStatement(@NotNull final List<String> words) {
         return words.contains(Constants.IDENTIFIER_IF)
                 && words.contains(Constants.BRACKET_FIGURE_OPEN);
     }
@@ -43,4 +51,5 @@ public class Checker {
                                            @NotNull final Set<String> checkSet) {
         return collection.stream().anyMatch(checkSet::contains);
     }
+
 }
