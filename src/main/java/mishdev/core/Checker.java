@@ -3,6 +3,7 @@ package mishdev.core;
 import mishdev.util.Constants;
 import org.jetbrains.annotations.NotNull;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 
@@ -25,12 +26,19 @@ class Checker {
         return hasElementInCollection(words, Constants.COMPARISON_OPERATORS) && words.size() == 3;
     }
 
-    // TODO: need support increment ++
     boolean isStatement(@NotNull final List<String> words) {
-        return words.contains(Constants.EQUAL_SYMBOL)
+        boolean hasArithmeticOperators = false;
+        List<String> operations = new ArrayList<>(Constants.ASSIGNER_OPERATORS);
+        for (int i = 0; i < words.size() && !hasArithmeticOperators; i++) {
+            for (int j = 0; j < operations.size() && !hasArithmeticOperators; j++) {
+                if (words.get(i).contains(operations.get(j))) {
+                    hasArithmeticOperators = true;
+                }
+            }
+        }
+        return (words.contains(Constants.EQUAL_SYMBOL) || hasArithmeticOperators)
                 && !words.contains(Constants.IDENTIFIER_FOR)
-                && !words.contains(Constants.IDENTIFIER_IF)
-                && words.size() >= 3;
+                && !words.contains(Constants.IDENTIFIER_IF);
     }
 
     boolean isCycleFor(@NotNull final List<String> words) {

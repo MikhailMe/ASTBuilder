@@ -1,11 +1,6 @@
 package mishdev.util;
 
-import mishdev.util.enums.Modifier;
-import mishdev.util.enums.PrimitiveType;
 import com.google.common.collect.ImmutableSet;
-import mishdev.util.enums.operators.Arithmetic;
-import mishdev.util.enums.operators.Assigner;
-import mishdev.util.enums.operators.Comparison;
 
 import java.util.Set;
 
@@ -42,49 +37,22 @@ public class Constants {
     public static final String KEYWORD_METHOD = "method";
     public static final String KEYWORD_PACKAGE = "package";
     public static final String KEYWORD_COMMAND = "command";
+    public static final String KEYWORD_VARIABLE = "variable";
     public static final String KEYWORD_CONDITION = "condition";
     public static final String KEYWORD_PARAMETER = "parameter";
     public static final String KEYWORD_STATEMENT = "statement";
     public static final String KEYWORD_EXPRESSION = "expression";
     public static final String KEYWORD_DECLARE_VARIABLE = "declare variable";
 
-    public static final Set<String> ARITHMETIC_OPERATORS = ImmutableSet.of(
-            Arithmetic.MOD.toString(),
-            Arithmetic.PLUS.toString(),
-            Arithmetic.MINUS.toString(),
-            Arithmetic.MULTI.toString(),
-            Arithmetic.DIVISION.toString()
-    );
-
     public static final Set<String> ASSIGNER_OPERATORS = ImmutableSet.of(
-            Assigner.PLUS_EQ.toString(),
-            Assigner.MINUS_EQ.toString(),
-            Assigner.MULTI_EQ.toString(),
-            Assigner.DIVISION_EQ.toString()
-    );
+            "++", "--", "+=", "-=", "*=", "/=");
 
     public static final Set<String> COMPARISON_OPERATORS = ImmutableSet.of(
-            Comparison.LESS.toString(),
-            Comparison.LESS.toString(),
-            Comparison.LESS.toString(),
-            Comparison.LESS.toString(),
-            Comparison.LESS.toString()
-    );
+            "==", "<", ">", "!=", "<=", ">=");
 
     public static final Set<String> MODIFIERS = ImmutableSet.of(
-            Modifier.FINAL.toString(),
-            Modifier.STATIC.toString(),
-            Modifier.PUBLIC.toString(),
-            Modifier.PRIVATE.toString(),
-            Modifier.PROTECTED.toString());
+            "final", "static", "public", "private", "protected");
 
     public static final Set<String> PRIMITIVE_TYPES = ImmutableSet.of(
-            PrimitiveType.INT_TYPE.toString(),
-            PrimitiveType.CHAR_TYPE.toString(),
-            PrimitiveType.LONG_TYPE.toString(),
-            PrimitiveType.BYTE_TYPE.toString(),
-            PrimitiveType.SHORT_TYPE.toString(),
-            PrimitiveType.FLOAT_TYPE.toString(),
-            PrimitiveType.DOUBLE_TYPE.toString(),
-            PrimitiveType.BOOLEAN_TYPE.toString());
+            "int", "char", "long", "byte", "short", "float", "double", "boolean");
 }

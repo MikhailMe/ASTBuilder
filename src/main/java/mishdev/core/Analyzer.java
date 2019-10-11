@@ -235,43 +235,49 @@ class Analyzer {
         }
     }
 
-    // TODO: rewrite method
     private void analyzeStatement(@NotNull final Node statementNode,
                                   @NotNull final List<String> words) {
-        statementNode.keyWord = Constants.KEYWORD_EXPRESSION;
-        statementNode.name = Constants.EQUAL_SYMBOL;
-        if (words.size() == 3) {
-            Node leftChild = new Node(statementNode);
-            leftChild.value = words.get(0);
-            leftChild.keyWord = Constants.LEFT_PART;
+        if (words.contains(Constants.EQUAL_SYMBOL)) {
+            int equalIndex = words.indexOf(Constants.EQUAL_SYMBOL);
 
-            Node rightChild = new Node(statementNode);
-            rightChild.value = helper.getValue(words);
-            rightChild.keyWord = Constants.RIGHT_PART;
+            statementNode.value = words.get(equalIndex);
+            statementNode.keyWord = Constants.KEYWORD_STATEMENT;
 
-            statementNode.children.add(leftChild);
-            statementNode.children.add(rightChild);
+            Node left = new Node(statementNode, Constants.KEYWORD_VARIABLE);
+            left.value = words.get(equalIndex - 1);
 
-        } else if (words.size() == 5) {
-            Node leftChild = new Node(statementNode);
-            leftChild.value = words.get(0);
-            leftChild.keyWord = Constants.LEFT_PART;
+            if (((words.size() - 1) - equalIndex) == 1) {
+                Node right = new Node(statementNode, Constants.KEYWORD_VARIABLE);
+                right.value = words.get(equalIndex + 1).replace(Constants.SEMICOLON_SYMBOL, Constants.EMPTY_SYMBOL);
+                statementNode.children.addAll(List.of(left, right));
+            } else if (((words.size() - 1) - equalIndex) == 3) {
+                List<String> rightPart = words.stream().skip(equalIndex + 1).collect(Collectors.toList());
 
-            Node rightChild = new Node(statementNode);
-            rightChild.value = words.get(3);
-            rightChild.keyWord = Constants.RIGHT_PART;
+                Node right = new Node(statementNode, Constants.KEYWORD_STATEMENT);
+                right.value = rightPart.get(1);
 
-            Node leftRightChild = new Node(rightChild);
-            leftRightChild.value = words.get(2);
-            leftRightChild.keyWord = Constants.LEFT_PART;
+                Node subLeftRight = new Node(right, Constants.KEYWORD_STATEMENT);
+                subLeftRight.value = rightPart.get(0);
 
-            Node rightRightChild = new Node(rightChild);
-            rightRightChild.value = helper.getValue(words);
-            rightRightChild.keyWord = Constants.RIGHT_PART;
+                Node subRightRight = new Node(right, Constants.KEYWORD_STATEMENT);
+                subRightRight.value = rightPart.get(2).replace(Constants.SEMICOLON_SYMBOL, Constants.EMPTY_SYMBOL);
 
-            rightChild.children.addAll(List.of(leftRightChild, rightRightChild));
+                right.children.addAll(List.of(subLeftRight, subRightRight));
+                statementNode.children.addAll(List.of(left, right));
+            }
 
-            statementNode.children.addAll(List.of(leftChild, rightChild));
+        }
+        // Assigner operations
+        else {
+            // INC or DEC
+            if (words.size() == 1) {
+                String word = words.get(0);
+                String detected = word.substring(word.length() - 2);
+                if (Constants.ASSIGNER_OPERATORS.contains(detected)) {
+                    statementNode.name = word.substring(0, word.length() - 2);
+                    statementNode.value = detected;
+                }
+            }
         }
     }
 
