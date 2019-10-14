@@ -10,7 +10,6 @@ import java.util.List;
 import java.util.function.BiFunction;
 import java.util.stream.Collectors;
 
-
 class Analyzer {
 
     @NotNull
@@ -121,8 +120,8 @@ class Analyzer {
             Node node = new Node(blockNode);
             if (checker.isDeclareVariable(lineWords)) {
                 analyzeDeclareVariable(node, lineWords);
-            } else if (checker.isStatement(lineWords)) {
-                analyzeStatement(node, lineWords);
+            } else if (checker.isExpression(lineWords)) {
+                analyzeExpression(node, lineWords);
             } else if (checker.isConditionStatement(lineWords)) {
                 index = analyze(index, blockNode, lineWords, this::preAnalyzeConditionStatement);
             } else if (checker.isCycleFor(lineWords)) {
@@ -165,7 +164,7 @@ class Analyzer {
     @NotNull
     private Node preAnalyzeConditionStatement(@NotNull final Node blockNode,
                                               @NotNull final List<String> words) {
-        Node simpleConditionNode = new Node(blockNode, Constants.IDENTIFIER_IF);
+        Node simpleConditionNode = new Node(blockNode, Constants.KEYWORD_CONDITION);
         simpleConditionNode.name = Constants.IDENTIFIER_IF;
 
         String conditionString = String.join(Constants.SPACE_SYMBOL, words);
@@ -184,8 +183,8 @@ class Analyzer {
                               @NotNull final List<String> words) {
         if (checker.isDeclareVariable(words)) {
             analyzeDeclareVariable(node, words);
-        } else if (checker.isStatement(words)) {
-            analyzeStatement(node, words);
+        } else if (checker.isExpression(words)) {
+            analyzeExpression(node, words);
         } else if (checker.isSimpleCondition(words)) {
             analyzeSimpleCondition(node, words, false);
         }
@@ -197,29 +196,26 @@ class Analyzer {
                                         @NotNull final List<String> words,
                                         boolean toParameters) {
         if (toParameters) {
-            Node conditionSimpleNode = new Node(conditionStatement, Constants.KEYWORD_CONDITION);
-            conditionSimpleNode.name = words.get(1);
-
-            Node left = new Node(conditionSimpleNode, Constants.LEFT_PART);
-            left.name = words.get(0);
-
-            Node right = new Node(conditionSimpleNode, Constants.RIGHT_PART);
-            right.name = words.get(2);
-
-            conditionSimpleNode.children.addAll(List.of(left, right));
+            Node conditionSimpleNode = new Node(conditionStatement, Constants.KEYWORD_OPERATOR);
+            getConditionChildren(conditionSimpleNode, words);
             conditionStatement.parameters.add(conditionSimpleNode);
         } else {
-            conditionStatement.name = words.get(1);
-            conditionStatement.keyWord = Constants.KEYWORD_CONDITION;
-
-            Node left = new Node(conditionStatement, Constants.LEFT_PART);
-            left.name = words.get(0);
-
-            Node right = new Node(conditionStatement, Constants.RIGHT_PART);
-            right.name = words.get(2);
-
-            conditionStatement.children.addAll(List.of(left, right));
+            conditionStatement.keyWord = Constants.KEYWORD_OPERATOR;
+            getConditionChildren(conditionStatement, words);
         }
+    }
+
+    private void getConditionChildren(@NotNull final Node node,
+                                      @NotNull final List<String> words) {
+        node.name = words.get(1);
+
+        Node left = new Node(node, Constants.LEFT_VAR);
+        left.name = words.get(0);
+
+        Node right = new Node(node, Constants.RIGHT_VAR);
+        right.name = words.get(2).replace(Constants.SEMICOLON_SYMBOL, Constants.EMPTY_SYMBOL);
+
+        node.children.addAll(List.of(left, right));
     }
 
     private void analyzeDeclareVariable(@NotNull final Node declareVariableNode,
@@ -235,35 +231,29 @@ class Analyzer {
         }
     }
 
-    private void analyzeStatement(@NotNull final Node statementNode,
-                                  @NotNull final List<String> words) {
+    private void analyzeExpression(@NotNull final Node expressionNode,
+                                   @NotNull final List<String> words) {
         if (words.contains(Constants.EQUAL_SYMBOL)) {
             int equalIndex = words.indexOf(Constants.EQUAL_SYMBOL);
 
-            statementNode.value = words.get(equalIndex);
-            statementNode.keyWord = Constants.KEYWORD_STATEMENT;
+            expressionNode.value = words.get(equalIndex);
+            expressionNode.keyWord = Constants.KEYWORD_EXPRESSION;
 
-            Node left = new Node(statementNode, Constants.KEYWORD_VARIABLE);
+            Node left = new Node(expressionNode, Constants.LEFT_VAR);
             left.value = words.get(equalIndex - 1);
 
             if (((words.size() - 1) - equalIndex) == 1) {
-                Node right = new Node(statementNode, Constants.KEYWORD_VARIABLE);
+                Node right = new Node(expressionNode, Constants.RIGHT_VAR);
                 right.value = words.get(equalIndex + 1).replace(Constants.SEMICOLON_SYMBOL, Constants.EMPTY_SYMBOL);
-                statementNode.children.addAll(List.of(left, right));
+                expressionNode.children.addAll(List.of(left, right));
             } else if (((words.size() - 1) - equalIndex) == 3) {
                 List<String> rightPart = words.stream().skip(equalIndex + 1).collect(Collectors.toList());
 
-                Node right = new Node(statementNode, Constants.KEYWORD_STATEMENT);
-                right.value = rightPart.get(1);
+                Node right = new Node(expressionNode, Constants.KEYWORD_OPERATOR);
 
-                Node subLeftRight = new Node(right, Constants.KEYWORD_STATEMENT);
-                subLeftRight.value = rightPart.get(0);
+                getConditionChildren(right, rightPart);
 
-                Node subRightRight = new Node(right, Constants.KEYWORD_STATEMENT);
-                subRightRight.value = rightPart.get(2).replace(Constants.SEMICOLON_SYMBOL, Constants.EMPTY_SYMBOL);
-
-                right.children.addAll(List.of(subLeftRight, subRightRight));
-                statementNode.children.addAll(List.of(left, right));
+                expressionNode.children.addAll(List.of(left, right));
             }
 
         }
@@ -274,8 +264,9 @@ class Analyzer {
                 String word = words.get(0);
                 String detected = word.substring(word.length() - 2);
                 if (Constants.ASSIGNER_OPERATORS.contains(detected)) {
-                    statementNode.name = word.substring(0, word.length() - 2);
-                    statementNode.value = detected;
+                    expressionNode.value = detected;
+                    expressionNode.keyWord = Constants.KEYWORD_EXPRESSION;
+                    expressionNode.name = word.substring(0, word.length() - 2);
                 }
             }
         }

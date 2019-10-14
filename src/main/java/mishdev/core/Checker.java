@@ -26,7 +26,7 @@ class Checker {
         return hasElementInCollection(words, Constants.COMPARISON_OPERATORS) && words.size() == 3;
     }
 
-    boolean isStatement(@NotNull final List<String> words) {
+    boolean isExpression(@NotNull final List<String> words) {
         boolean hasArithmeticOperators = false;
         List<String> operations = new ArrayList<>(Constants.ASSIGNER_OPERATORS);
         for (int i = 0; i < words.size() && !hasArithmeticOperators; i++) {

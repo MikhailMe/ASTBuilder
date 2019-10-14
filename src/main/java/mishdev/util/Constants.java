@@ -22,8 +22,8 @@ public class Constants {
     public static final String BRACKET_FIGURE_OPEN = "{";
     public static final String BRACKET_FIGURE_CLOSE = "}";
 
-    public static final String LEFT_PART = "left";
-    public static final String RIGHT_PART = "right";
+    public static final String LEFT_VAR = "left variable";
+    public static final String RIGHT_VAR = "right variable";
 
     public static final String TYPE_VOID = "void";
     public static final String IDENTIFIER_IF = "if";
@@ -36,11 +36,9 @@ public class Constants {
     public static final String KEYWORD_FIELD = "field";
     public static final String KEYWORD_METHOD = "method";
     public static final String KEYWORD_PACKAGE = "package";
-    public static final String KEYWORD_COMMAND = "command";
-    public static final String KEYWORD_VARIABLE = "variable";
+    public static final String KEYWORD_OPERATOR = "operator";
     public static final String KEYWORD_CONDITION = "condition";
     public static final String KEYWORD_PARAMETER = "parameter";
-    public static final String KEYWORD_STATEMENT = "statement";
     public static final String KEYWORD_EXPRESSION = "expression";
     public static final String KEYWORD_DECLARE_VARIABLE = "declare variable";
 

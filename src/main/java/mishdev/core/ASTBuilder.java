@@ -27,35 +27,32 @@ public class ASTBuilder {
         this.traversalAST(this.build(), 0);
     }
 
-    // FIXME: 10/14/2019 
-    // keyword -> modifiers -> type -> name -> value -> parameters -> children
+    //  sequence: keyword -> modifiers -> type -> name -> value -> parameters -> children
     private void traversalAST(final Node node, int tabIndex) {
+        System.out.println(Constants.NEXT_STRING_SYMBOL);
         if (node != null) {
             if (node.keyWord != null) {
                 System.out.print(generateStringWithTab(node.keyWord + ": ", tabIndex));
             }
             if (node.modifiers != null && !node.modifiers.isEmpty()) {
-                final int index = tabIndex;
                 node.modifiers.forEach(modifier ->
-                        System.out.print(generateStringWithTab(modifier + Constants.SPACE_SYMBOL, index)));
+                        System.out.print(modifier + Constants.SPACE_SYMBOL));
             }
             if (node.type != null) {
-                System.out.print(generateStringWithTab(node.type + Constants.SPACE_SYMBOL, tabIndex));
+                System.out.print(node.type + Constants.SPACE_SYMBOL);
             }
             if (node.name != null) {
-                System.out.print(generateStringWithTab(node.name + Constants.SPACE_SYMBOL, tabIndex));
+                System.out.print(node.name + Constants.SPACE_SYMBOL);
             }
             if (node.value != null) {
-                System.out.print(generateStringWithTab(node.value + Constants.SPACE_SYMBOL, tabIndex));
+                System.out.print(node.value + Constants.SPACE_SYMBOL);
             }
             if (node.parameters != null && !node.parameters.isEmpty()) {
-                System.out.println(Constants.NEXT_STRING_SYMBOL);
-                final int parametersTabIndex = tabIndex++;
+                final int parametersTabIndex = ++tabIndex;
                 node.parameters.forEach(param -> this.traversalAST(param, parametersTabIndex));
             }
             if (node.children != null && !node.children.isEmpty()) {
-                System.out.println(Constants.NEXT_STRING_SYMBOL);
-                final int childrenTabIndex = tabIndex++;
+                final int childrenTabIndex = ++tabIndex;
                 node.children.forEach(child -> this.traversalAST(child, childrenTabIndex));
             }
         }

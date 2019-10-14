@@ -12,6 +12,7 @@ public class Main {
         a = b + c;
         variable = 213L;
         if (n < 2) {
+            double localTemp = 1.2;
             return n;
         }
         for (int i = 1; i < n; i++) {
