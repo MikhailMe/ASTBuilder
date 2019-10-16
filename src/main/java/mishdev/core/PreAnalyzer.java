@@ -11,30 +11,30 @@ import java.util.stream.Collectors;
 class PreAnalyzer {
 
     @NotNull
-    Node preAnalyzePackage(@NotNull final List<String> words) {
-        Node packageNode = new Node();
-        packageNode.keyWord = words.get(0);
-        packageNode.name = words.get(1).replace(Constants.SEMICOLON_SYMBOL, Constants.EMPTY_SYMBOL);
-        return packageNode;
+    ASTNode preAnalyzePackage(@NotNull final List<String> words) {
+        ASTNode packageASTNode = new ASTNode();
+        packageASTNode.keyWord = words.get(0);
+        packageASTNode.name = words.get(1).replace(Constants.SEMICOLON_SYMBOL, Constants.EMPTY_SYMBOL);
+        return packageASTNode;
     }
 
-    void preAnalyzeClass(@NotNull final Node node,
+    void preAnalyzeClass(@NotNull final ASTNode ASTNode,
                          @NotNull final List<String> words) {
         for (String currentWord : words) {
             if (Constants.MODIFIERS.contains(currentWord)) {
-                node.modifiers.add(currentWord);
+                ASTNode.modifiers.add(currentWord);
             } else if (Constants.KEYWORD_CLASS.equals(currentWord)) {
-                node.keyWord = currentWord;
+                ASTNode.keyWord = currentWord;
             } else if (!currentWord.equals(Constants.BRACKET_FIGURE_OPEN)) {
-                node.name = currentWord;
+                ASTNode.name = currentWord;
             }
         }
     }
 
     @NotNull
-    Node preAnalyzeMethod(@NotNull final Node classNode,
-                          @NotNull final String classLine) {
-        Node methodNode = new Node(classNode, Constants.KEYWORD_METHOD);
+    ASTNode preAnalyzeMethod(@NotNull final ASTNode classASTNode,
+                             @NotNull final String classLine) {
+        ASTNode methodASTNode = new ASTNode(classASTNode, Constants.KEYWORD_METHOD);
         List<String> words = Arrays
                 .stream(classLine.split(Constants.SPACE_SYMBOL))
                 .filter(word -> !word.isEmpty())
@@ -45,39 +45,39 @@ class PreAnalyzer {
                 continue;
             }
             if (Constants.MODIFIERS.contains(currentWord)) {
-                methodNode.modifiers.add(currentWord);
+                methodASTNode.modifiers.add(currentWord);
             } else if (Constants.PRIMITIVE_TYPES.contains(currentWord)
                     || Constants.TYPE_VOID.equals(currentWord)
                     || Character.isUpperCase(currentWord.charAt(0))) {
-                methodNode.type = currentWord;
+                methodASTNode.type = currentWord;
             } else if (!Constants.PRIMITIVE_TYPES.contains(currentWord)
                     && Character.isLowerCase(currentWord.charAt(0))) {
                 if (currentWord.contains(Constants.BRACKET_ROUND_OPEN)) {
                     int bracketIndex = currentWord.indexOf(Constants.BRACKET_ROUND_OPEN);
-                    methodNode.name = currentWord.substring(0, bracketIndex);
+                    methodASTNode.name = currentWord.substring(0, bracketIndex);
                     if (!currentWord.contains(Constants.BRACKET_ROUND_CLOSE)) {
-                        List<Node> methodParameters = analyzeMethodParameters(words
+                        List<ASTNode> methodParameters = analyzeMethodParameters(words
                                 .stream()
                                 .skip(index)
-                                .collect(Collectors.toList()), methodNode);
-                        methodNode.parameters.addAll(methodParameters);
+                                .collect(Collectors.toList()), methodASTNode);
+                        methodASTNode.parameters.addAll(methodParameters);
                         break;
                     }
                 }
             }
         }
 
-        return methodNode;
+        return methodASTNode;
     }
 
     @NotNull
-    private List<Node> analyzeMethodParameters(@NotNull final List<String> words,
-                                               @NotNull final Node methodNode) {
-        List<Node> parameters = new ArrayList<>();
-        Node parameter = null;
+    private List<ASTNode> analyzeMethodParameters(@NotNull final List<String> words,
+                                                  @NotNull final ASTNode methodASTNode) {
+        List<ASTNode> parameters = new ArrayList<>();
+        ASTNode parameter = null;
         for (String currentWord : words) {
             if (parameter == null) {
-                parameter = new Node(methodNode, Constants.KEYWORD_PARAMETER);
+                parameter = new ASTNode(methodASTNode, Constants.KEYWORD_PARAMETER);
             }
             if (currentWord.contains(Constants.BRACKET_ROUND_OPEN)) {
                 int bracketIndex = currentWord.indexOf(Constants.BRACKET_ROUND_OPEN);

@@ -9,11 +9,11 @@ import java.util.List;
 
 @Data
 @AllArgsConstructor
-public class Node {
+public class ASTNode {
 
-    public Node parent;
-    public List<Node> children;
-    public List<Node> parameters;
+    public ASTNode parent;
+    public List<ASTNode> children;
+    public List<ASTNode> parameters;
 
     public String name;
     public String type;
@@ -21,21 +21,21 @@ public class Node {
     public String keyWord;
     public List<String> modifiers;
 
-    Node() {
+    ASTNode() {
         this.children = new ArrayList<>();
         this.modifiers = new ArrayList<>();
         this.parameters = new ArrayList<>();
     }
 
-    Node(final Node parent) {
+    ASTNode(final ASTNode parent) {
         this.parent = parent;
         this.children = new ArrayList<>();
         this.modifiers = new ArrayList<>();
         this.parameters = new ArrayList<>();
     }
 
-    Node(final Node parent,
-         @NotNull final String keyWord) {
+    ASTNode(final ASTNode parent,
+            @NotNull final String keyWord) {
         this.parent = parent;
         this.keyWord = keyWord;
         this.children = new ArrayList<>();
