@@ -15,19 +15,29 @@ public class ASTNode {
     public List<ASTNode> children;
     public List<ASTNode> parameters;
 
+    public long id;
     public String name;
     public String type;
     public Object value;
     public String keyWord;
     public List<String> modifiers;
 
+    private static long nodeId = -1;
+
+    private long incrementId() {
+        ++nodeId;
+        return nodeId;
+    }
+
     ASTNode() {
+        this.id = incrementId();
         this.children = new ArrayList<>();
         this.modifiers = new ArrayList<>();
         this.parameters = new ArrayList<>();
     }
 
     ASTNode(final ASTNode parent) {
+        this.id = incrementId();
         this.parent = parent;
         this.children = new ArrayList<>();
         this.modifiers = new ArrayList<>();
@@ -37,6 +47,7 @@ public class ASTNode {
     ASTNode(final ASTNode parent,
             @NotNull final String keyWord) {
         this.parent = parent;
+        this.id = incrementId();
         this.keyWord = keyWord;
         this.children = new ArrayList<>();
         this.modifiers = new ArrayList<>();

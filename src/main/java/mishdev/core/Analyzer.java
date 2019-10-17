@@ -13,9 +13,6 @@ import java.util.stream.Collectors;
 class Analyzer {
 
     @NotNull
-    private Helper helper;
-
-    @NotNull
     private Checker checker;
 
     @NotNull
@@ -25,7 +22,6 @@ class Analyzer {
     private List<String> programText;
 
     Analyzer(@NotNull final List<String> programText) {
-        this.helper = new Helper();
         this.checker = new Checker();
         this.programText = programText;
         this.preAnalyzer = new PreAnalyzer();
@@ -53,7 +49,7 @@ class Analyzer {
 
     private void analyzeClass(@NotNull final ASTNode classASTNode) {
         int startIndex = 1;
-        ImmutablePair<Integer, Integer> diapason = helper.calculateDiapason(startIndex, programText);
+        ImmutablePair<Integer, Integer> diapason = this.calculateDiapason(startIndex, programText);
         List<String> classWords = Arrays
                 .stream(programText.get(startIndex).split(Constants.SPACE_SYMBOL))
                 .collect(Collectors.toList());
@@ -68,7 +64,7 @@ class Analyzer {
                     && classLine.contains(Constants.BRACKET_ROUND_OPEN)
                     && classLine.contains(Constants.BRACKET_ROUND_CLOSE)) {
                 ASTNode methodASTNode = preAnalyzer.preAnalyzeMethod(classASTNode, classLine);
-                ImmutablePair<Integer, Integer> methodDiapason = helper.calculateDiapason(index, programText);
+                ImmutablePair<Integer, Integer> methodDiapason = this.calculateDiapason(index, programText);
                 analyzeBlock(methodASTNode, ImmutablePair.of(methodDiapason.left + 1, methodDiapason.right));
                 index = methodDiapason.right;
                 classASTNode.children.add(methodASTNode);
@@ -128,7 +124,7 @@ class Analyzer {
                 index = analyze(index, blockASTNode, lineWords, this::preAnalyzeCycle);
             } else if (checker.isReturn(lineWords)) {
                 node.keyWord = Constants.IDENTIFIER_RETURN;
-                node.value = helper.getValue(lineWords);
+                node.value = this.getValue(lineWords);
             }
 
             if (node.isUsed()) {
@@ -227,7 +223,7 @@ class Analyzer {
             declareVariableASTNode.name = words.get(1).replace(Constants.SEMICOLON_SYMBOL, Constants.EMPTY_SYMBOL);
         } else {
             declareVariableASTNode.name = words.get(1);
-            declareVariableASTNode.value = helper.getValue(words);
+            declareVariableASTNode.value = this.getValue(words);
         }
     }
 
@@ -276,10 +272,45 @@ class Analyzer {
                         @NotNull final ASTNode blockASTNode,
                         @NotNull final List<String> words,
                         @NotNull BiFunction<ASTNode, List<String>, ASTNode> preAnalyze) {
-        ImmutablePair<Integer, Integer> diapason = helper.calculateDiapason(index, programText);
+        ImmutablePair<Integer, Integer> diapason = this.calculateDiapason(index, programText);
         ASTNode node = preAnalyze.apply(blockASTNode, words);
         analyzeBlock(node, ImmutablePair.of(diapason.left + 1, diapason.right));
         blockASTNode.children.add(node);
         return diapason.right;
+    }
+
+    @NotNull
+    private ImmutablePair<Integer, Integer> calculateDiapason(final int startIndex,
+                                                              @NotNull final List<String> text) {
+        if (text.get(startIndex).contains(Constants.BRACKET_FIGURE_CLOSE)) {
+            return ImmutablePair.of(startIndex, startIndex);
+        }
+
+        int endIndex = -1;
+        int bracketCounter = 0;
+        for (int i = startIndex + 1; i < text.size(); i++) {
+            String currentLine = text.get(i);
+            if (currentLine.contains(Constants.BRACKET_FIGURE_OPEN)) {
+                bracketCounter++;
+            }
+            if (currentLine.contains(Constants.BRACKET_FIGURE_CLOSE)) {
+                bracketCounter--;
+            }
+            if (bracketCounter == -1) {
+                endIndex = i;
+                break;
+            }
+        }
+
+        if (endIndex == -1) {
+            throw new IllegalArgumentException("Can't found end of class/method");
+        }
+
+        return ImmutablePair.of(startIndex, endIndex);
+    }
+
+    @NotNull
+    private String getValue(@NotNull final List<String> words) {
+        return words.get(words.size() - 1).replace(Constants.SEMICOLON_SYMBOL, Constants.EMPTY_SYMBOL);
     }
 }

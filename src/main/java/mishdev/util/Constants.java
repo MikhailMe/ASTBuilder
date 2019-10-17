@@ -6,10 +6,17 @@ import java.util.Set;
 
 public class Constants {
 
+    public static final String PROGRAM_LOCATION = "src\\main\\resources\\input.txt";
+    public static final String DOT_FILE_LOCATION = "src\\main\\resources\\ast.dot";
+    public static final String OUTPUT_LOCATION = "src\\main\\resources\\output.svg";
+
     public static final String EMPTY_SYMBOL = "";
     public static final String SPACE_SYMBOL = " ";
     public static final String COMMA_SYMBOL = ",";
+    public static final String COLON_SYMBOL = ":";
     public static final String EQUAL_SYMBOL = "=";
+    public static final String QUOTE_SYMBOL = "\"";
+    public static final String ARROW_SYMBOL = "->";
     public static final String SEMICOLON_SYMBOL = ";";
     public static final String NEXT_STRING_SYMBOL = "\n";
 
@@ -31,6 +38,8 @@ public class Constants {
     public static final String IDENTIFIER_ELSE = "else";
     public static final String IDENTIFIER_RETURN = "return";
 
+    public static final String KEYWORD_DIGRAPH = "digraph";
+    public static final String KEYWORD_LABEL = "label";
     public static final String KEYWORD_CYCLE = "cycle";
     public static final String KEYWORD_CLASS = "class";
     public static final String KEYWORD_FIELD = "field";

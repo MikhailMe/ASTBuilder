@@ -1,0 +1,94 @@
+digraph{
+2[label="field : private int classField"];
+4[label="parameter : int n"];
+5[label="parameter : Boolean flag"];
+7[label="declare variable : int a 0"];
+8[label="declare variable : int b 1"];
+9[label="declare variable : int c 0"];
+10[label="declare variable : long variable"];
+12[label="left variable : a"];
+14[label="left variable : b"];
+15[label="right variable : c"];
+13[label="operator : +"];
+11[label="expression : ="];
+17[label="left variable : variable"];
+18[label="right variable : 213L"];
+16[label="expression : ="];
+22[label="left variable : n"];
+23[label="right variable : 2"];
+21[label="operator : <"];
+24[label="declare variable : double localTemp 1.2"];
+25[label="return : n"];
+20[label="condition : if"];
+28[label="declare variable : int i 1"];
+30[label="left variable : i"];
+31[label="right variable : n"];
+29[label="operator : <"];
+32[label="expression : i ++"];
+34[label="left variable : c"];
+36[label="left variable : a"];
+37[label="right variable : b"];
+35[label="operator : +"];
+33[label="expression : ="];
+39[label="left variable : a"];
+40[label="right variable : b"];
+38[label="expression : ="];
+42[label="left variable : b"];
+43[label="right variable : c"];
+41[label="expression : ="];
+27[label="cycle : for"];
+44[label="declare variable : Object object Object()"];
+45[label="return : c"];
+3[label="method : private static int fibonacci"];
+47[label="parameter : String[] args"];
+49[label="declare variable : int result fibonacci(10)"];
+46[label="method : public static void main"];
+1[label="class : public Main"];
+0[label="package : mishdev"];
+0 -> 1
+1 -> 2
+1 -> 3
+3 -> 4
+3 -> 5
+3 -> 7
+3 -> 8
+3 -> 9
+3 -> 10
+3 -> 11
+11 -> 12
+11 -> 13
+13 -> 14
+13 -> 15
+3 -> 16
+16 -> 17
+16 -> 18
+3 -> 20
+20 -> 21
+21 -> 22
+21 -> 23
+20 -> 24
+20 -> 25
+3 -> 27
+27 -> 28
+27 -> 29
+29 -> 30
+29 -> 31
+27 -> 32
+27 -> 33
+33 -> 34
+33 -> 35
+35 -> 36
+35 -> 37
+27 -> 38
+38 -> 39
+38 -> 40
+27 -> 41
+41 -> 42
+41 -> 43
+3 -> 44
+3 -> 45
+1 -> 46
+46 -> 47
+46 -> 49
+
+}

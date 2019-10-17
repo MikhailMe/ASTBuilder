@@ -7,9 +7,9 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
-public class Reader {
+class Reader {
 
-    public List<String> read(@NotNull final String fileName) {
+    List<String> read(@NotNull final String fileName) {
         List<String> programText = new ArrayList<>();
         try (FileReader fr = new FileReader(fileName);
              BufferedReader bis = new BufferedReader(fr)) {
