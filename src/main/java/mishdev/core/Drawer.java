@@ -18,15 +18,8 @@ import java.util.List;
 
 class Drawer {
 
-    @NotNull
-    private ASTNode ast;
-
-    Drawer(@NotNull final ASTNode ast) {
-        this.ast = ast;
-    }
-
-    void drawAST() {
-        this.createDotFile();
+    void drawAST(@NotNull final ASTNode ast) {
+        this.createDotFileByAST(ast);
         try {
             MutableGraph graph = Parser.read(new File(Constants.DOT_FILE_LOCATION));
             Graphviz
@@ -40,7 +33,7 @@ class Drawer {
         }
     }
 
-    private void createDotFile() {
+    private void createDotFileByAST(@NotNull final ASTNode ast) {
         List<Pair<Long, List<String>>> dots = new ArrayList<>();
         List<Pair<String, String>> links = new ArrayList<>();
         this.prepareDrawingData(ast, links, dots);
@@ -66,7 +59,8 @@ class Drawer {
                 label.add(node.name);
             }
             if (node.value != null) {
-                label.add(node.value.toString());
+                String value = node.value.toString();
+                label.add(value);
             }
             if (node.parameters != null && !node.parameters.isEmpty()) {
                 node.parameters.forEach(param -> {

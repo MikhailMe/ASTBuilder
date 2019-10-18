@@ -5,7 +5,6 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Set;
 
 class Checker {
 
@@ -23,7 +22,7 @@ class Checker {
     }
 
     boolean isSimpleCondition(@NotNull final List<String> words) {
-        return hasElementInCollection(words, Constants.COMPARISON_OPERATORS) && words.size() == 3;
+        return hasElementInCollection(words) && words.size() == 3;
     }
 
     boolean isExpression(@NotNull final List<String> words) {
@@ -43,7 +42,7 @@ class Checker {
 
     boolean isCycleFor(@NotNull final List<String> words) {
         return words.contains(Constants.IDENTIFIER_FOR)
-                && hasElementInCollection(words, Constants.COMPARISON_OPERATORS);
+                && hasElementInCollection(words);
     }
 
     boolean isConditionStatement(@NotNull final List<String> words) {
@@ -55,9 +54,8 @@ class Checker {
         return words.contains(Constants.IDENTIFIER_RETURN);
     }
 
-    private boolean hasElementInCollection(@NotNull final List<String> collection,
-                                           @NotNull final Set<String> checkSet) {
-        return collection.stream().anyMatch(checkSet::contains);
+    private boolean hasElementInCollection(@NotNull final List<String> collection) {
+        return collection.stream().anyMatch(Constants.COMPARISON_OPERATORS::contains);
     }
 
 }

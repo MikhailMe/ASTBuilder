@@ -1,94 +1,196 @@
 digraph{
-2[label="field : private int classField"];
-4[label="parameter : int n"];
-5[label="parameter : Boolean flag"];
-7[label="declare variable : int a 0"];
-8[label="declare variable : int b 1"];
-9[label="declare variable : int c 0"];
-10[label="declare variable : long variable"];
-12[label="left variable : a"];
-14[label="left variable : b"];
-15[label="right variable : c"];
-13[label="operator : +"];
-11[label="expression : ="];
-17[label="left variable : variable"];
-18[label="right variable : 213L"];
-16[label="expression : ="];
-22[label="left variable : n"];
-23[label="right variable : 2"];
-21[label="operator : <"];
-24[label="declare variable : double localTemp 1.2"];
-25[label="return : n"];
-20[label="condition : if"];
-28[label="declare variable : int i 1"];
-30[label="left variable : i"];
-31[label="right variable : n"];
-29[label="operator : <"];
-32[label="expression : i ++"];
-34[label="left variable : c"];
-36[label="left variable : a"];
-37[label="right variable : b"];
-35[label="operator : +"];
-33[label="expression : ="];
-39[label="left variable : a"];
-40[label="right variable : b"];
-38[label="expression : ="];
-42[label="left variable : b"];
-43[label="right variable : c"];
-41[label="expression : ="];
-27[label="cycle : for"];
-44[label="declare variable : Object object Object()"];
-45[label="return : c"];
-3[label="method : private static int fibonacci"];
-47[label="parameter : String[] args"];
-49[label="declare variable : int result fibonacci(10)"];
-46[label="method : public static void main"];
+5[label="type : int"];
+6[label="type : classField"];
+4[label="modifier : private"];
+3[label="modifiers :"];
+2[label="field :"];
+15[label="type : int"];
+16[label="name : n"];
+14[label="parameter :"];
+18[label="type : Boolean"];
+19[label="name : flag"];
+17[label="parameter :"];
+13[label="parameters :"];
+11[label="type : int"];
+12[label="name : fibonacci"];
+9[label="modifier : private"];
+10[label="modifier : static"];
+8[label="modifiers :"];
+23[label="type : int"];
+24[label="name : a"];
+25[label="const : 0"];
+22[label="declare variable :"];
+27[label="type : int"];
+28[label="name : b"];
+29[label="const : 1"];
+26[label="declare variable :"];
+31[label="type : int"];
+32[label="name : c"];
+33[label="const : 0"];
+30[label="declare variable :"];
+35[label="type : long"];
+36[label="name : variable"];
+34[label="declare variable :"];
+38[label="variable : a"];
+40[label="variable : b"];
+41[label="variable : c"];
+39[label="operator : +"];
+37[label="expression : ="];
+43[label="variable : variable"];
+44[label="const : 213"];
+42[label="expression : ="];
+48[label="variable : n"];
+49[label="const : 2"];
+47[label="operator : <"];
+51[label="type : double"];
+52[label="name : localTemp"];
+53[label="const : 1.2"];
+50[label="declare variable :"];
+55[label="return value : n"];
+54[label="return :"];
+46[label="condition : if"];
+60[label="type : int"];
+61[label="name : i"];
+62[label="const : 1"];
+59[label="declare variable :"];
+64[label="variable : i"];
+65[label="variable : n"];
+63[label="operator : <"];
+67[label="variable : i"];
+66[label="expression : ++"];
+58[label="parameters :"];
+69[label="variable : c"];
+71[label="variable : a"];
+72[label="const : 5"];
+70[label="operator : +"];
+68[label="expression : ="];
+74[label="variable : a"];
+75[label="variable : b"];
+73[label="expression : ="];
+77[label="variable : b"];
+78[label="variable : c"];
+76[label="expression : ="];
+57[label="cycle : for"];
+80[label="type : Object"];
+81[label="name : object"];
+82[label="const : 123"];
+79[label="declare variable :"];
+84[label="return value : c"];
+83[label="return :"];
+21[label="body :"];
+7[label="method :"];
+93[label="type : String[]"];
+94[label="name : args"];
+92[label="parameter :"];
+91[label="parameters :"];
+89[label="type : void"];
+90[label="name : main"];
+87[label="modifier : public"];
+88[label="modifier : static"];
+86[label="modifiers :"];
+98[label="type : int"];
+99[label="name : result"];
+100[label="variable : fibonacci(10)"];
+97[label="declare variable :"];
+96[label="body :"];
+85[label="method :"];
 1[label="class : public Main"];
 0[label="package : mishdev"];
 0 -> 1
 1 -> 2
-1 -> 3
+2 -> 5
+2 -> 6
+2 -> 3
 3 -> 4
-3 -> 5
-3 -> 7
-3 -> 8
-3 -> 9
-3 -> 10
-3 -> 11
-11 -> 12
-11 -> 13
+1 -> 7
+7 -> 13
 13 -> 14
-13 -> 15
-3 -> 16
-16 -> 17
-16 -> 18
-3 -> 20
-20 -> 21
+14 -> 15
+14 -> 16
+13 -> 17
+17 -> 18
+17 -> 19
+7 -> 11
+7 -> 12
+7 -> 8
+8 -> 9
+8 -> 10
+7 -> 21
 21 -> 22
-21 -> 23
-20 -> 24
-20 -> 25
-3 -> 27
-27 -> 28
-27 -> 29
-29 -> 30
-29 -> 31
-27 -> 32
-27 -> 33
-33 -> 34
-33 -> 35
-35 -> 36
-35 -> 37
-27 -> 38
-38 -> 39
-38 -> 40
-27 -> 41
-41 -> 42
-41 -> 43
-3 -> 44
-3 -> 45
-1 -> 46
+22 -> 23
+22 -> 24
+22 -> 25
+21 -> 26
+26 -> 27
+26 -> 28
+26 -> 29
+21 -> 30
+30 -> 31
+30 -> 32
+30 -> 33
+21 -> 34
+34 -> 35
+34 -> 36
+21 -> 37
+37 -> 38
+37 -> 39
+39 -> 40
+39 -> 41
+21 -> 42
+42 -> 43
+42 -> 44
+21 -> 46
 46 -> 47
-46 -> 49
+47 -> 48
+47 -> 49
+46 -> 50
+50 -> 51
+50 -> 52
+50 -> 53
+46 -> 54
+54 -> 55
+21 -> 57
+57 -> 58
+58 -> 59
+59 -> 60
+59 -> 61
+59 -> 62
+58 -> 63
+63 -> 64
+63 -> 65
+58 -> 66
+66 -> 67
+57 -> 68
+68 -> 69
+68 -> 70
+70 -> 71
+70 -> 72
+57 -> 73
+73 -> 74
+73 -> 75
+57 -> 76
+76 -> 77
+76 -> 78
+21 -> 79
+79 -> 80
+79 -> 81
+79 -> 82
+21 -> 83
+83 -> 84
+1 -> 85
+85 -> 91
+91 -> 92
+92 -> 93
+92 -> 94
+85 -> 89
+85 -> 90
+85 -> 86
+86 -> 87
+86 -> 88
+85 -> 96
+96 -> 97
+97 -> 98
+97 -> 99
+97 -> 100
 
 }

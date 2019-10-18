@@ -10,17 +10,17 @@ public class Main {
         int c = 0;
         long variable;
         a = b + c;
-        variable = 213L;
+        variable = 213;
         if (n < 2) {
             double localTemp = 1.2;
             return n;
         }
         for (int i = 1; i < n; i++) {
-            c = a + b;
+            c = a + 5;
             a = b;
             b = c;
         }
-        Object object = new Object();
+        Object object = 123;
         return c;
     }
 

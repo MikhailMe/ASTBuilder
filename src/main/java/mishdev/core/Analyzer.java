@@ -65,7 +65,9 @@ class Analyzer {
                     && classLine.contains(Constants.BRACKET_ROUND_CLOSE)) {
                 ASTNode methodASTNode = preAnalyzer.preAnalyzeMethod(classASTNode, classLine);
                 ImmutablePair<Integer, Integer> methodDiapason = this.calculateDiapason(index, programText);
-                analyzeBlock(methodASTNode, ImmutablePair.of(methodDiapason.left + 1, methodDiapason.right));
+                ASTNode methodBodyNode = new ASTNode(methodASTNode, Constants.KEYWORD_BODY);
+                analyzeBlock(methodBodyNode, ImmutablePair.of(methodDiapason.left + 1, methodDiapason.right));
+                methodASTNode.children.add(methodBodyNode);
                 index = methodDiapason.right;
                 classASTNode.children.add(methodASTNode);
             }
@@ -85,22 +87,29 @@ class Analyzer {
                 .stream(classLine.split(Constants.SPACE_SYMBOL))
                 .filter(word -> !word.isEmpty())
                 .collect(Collectors.toList());
+        ASTNode fieldModifiers = new ASTNode(fieldASTNode, Constants.KEYWORD_MODIFIERS);
         for (String currentWord : words) {
             if (currentWord.isEmpty()) {
                 continue;
             }
             if (Constants.MODIFIERS.contains(currentWord)) {
-                fieldASTNode.modifiers.add(currentWord);
+                ASTNode modifierNode = new ASTNode(fieldModifiers, Constants.KEYWORD_MODIFIER);
+                modifierNode.name = currentWord;
+                fieldModifiers.children.add(modifierNode);
             } else if (Constants.PRIMITIVE_TYPES.contains(currentWord)
                     || Constants.TYPE_VOID.equals(currentWord)
                     || Character.isUpperCase(currentWord.charAt(0))) {
-                fieldASTNode.type = currentWord;
+                ASTNode typeFieldNode = new ASTNode(fieldASTNode, Constants.KEYWORD_TYPE);
+                typeFieldNode.type = currentWord;
+                fieldASTNode.children.add(typeFieldNode);
             } else if (!Constants.PRIMITIVE_TYPES.contains(currentWord)
                     && Character.isLowerCase(currentWord.charAt(0))) {
-                fieldASTNode.name = currentWord.replace(Constants.SEMICOLON_SYMBOL, Constants.EMPTY_SYMBOL);
+                ASTNode nameFieldNode = new ASTNode(fieldASTNode, Constants.KEYWORD_TYPE);
+                nameFieldNode.name = currentWord.replace(Constants.SEMICOLON_SYMBOL, Constants.EMPTY_SYMBOL);
+                fieldASTNode.children.add(nameFieldNode);
             }
         }
-        fieldASTNode.children = null;
+        fieldASTNode.children.add(fieldModifiers);
         return fieldASTNode;
     }
 
@@ -124,9 +133,10 @@ class Analyzer {
                 index = analyze(index, blockASTNode, lineWords, this::preAnalyzeCycle);
             } else if (checker.isReturn(lineWords)) {
                 node.keyWord = Constants.IDENTIFIER_RETURN;
-                node.value = this.getValue(lineWords);
+                ASTNode returnValue = new ASTNode(node, Constants.KEYWORD_RETURN_VALUE);
+                returnValue.value = this.getValue(lineWords);
+                node.children.add(returnValue);
             }
-
             if (node.isUsed()) {
                 blockASTNode.children.add(node);
             }
@@ -146,14 +156,16 @@ class Analyzer {
         String cycleBody = cycleString.substring(firstIndex + 1, lastIndex);
         String[] tokens = cycleBody.split(Constants.SEMICOLON_SYMBOL);
 
+        ASTNode cycleParameters = new ASTNode(cycleASTNode, Constants.KEYWORD_PARAMETERS);
         for (String token : tokens) {
             ASTNode childASTNode = new ASTNode(cycleASTNode);
             analyzeToken(childASTNode, Arrays
                     .stream(token.split(Constants.SPACE_SYMBOL))
                     .filter(word -> !word.isEmpty())
                     .collect(Collectors.toList()));
-            cycleASTNode.parameters.add(childASTNode);
+            cycleParameters.parameters.add(childASTNode);
         }
+        cycleASTNode.parameters.add(cycleParameters);
         return cycleASTNode;
     }
 
@@ -205,11 +217,15 @@ class Analyzer {
                                       @NotNull final List<String> words) {
         node.value = words.get(1);
 
-        ASTNode left = new ASTNode(node, Constants.LEFT_VAR);
-        left.value = words.get(0);
+        String leftValue = words.get(0);
+        String leftKeyWord = getKeyWord(leftValue);
+        ASTNode left = new ASTNode(node, leftKeyWord);
+        left.value = leftValue;
 
-        ASTNode right = new ASTNode(node, Constants.RIGHT_VAR);
-        right.value = words.get(2).replace(Constants.SEMICOLON_SYMBOL, Constants.EMPTY_SYMBOL);
+        String rightValue = words.get(2).replace(Constants.SEMICOLON_SYMBOL, Constants.EMPTY_SYMBOL);
+        String rightKeyWord = getKeyWord(rightValue);
+        ASTNode right = new ASTNode(node, rightKeyWord);
+        right.value = rightValue;
 
         node.children.addAll(List.of(left, right));
     }
@@ -217,13 +233,26 @@ class Analyzer {
     private void analyzeDeclareVariable(@NotNull final ASTNode declareVariableASTNode,
                                         @NotNull final List<String> words) {
         declareVariableASTNode.keyWord = Constants.KEYWORD_DECLARE_VARIABLE;
-        declareVariableASTNode.type = words.get(0);
+
+        ASTNode typeNode = new ASTNode(declareVariableASTNode, Constants.KEYWORD_TYPE);
+        typeNode.type = words.get(0);
+        declareVariableASTNode.children.add(typeNode);
 
         if (words.get(1).contains(Constants.SEMICOLON_SYMBOL)) {
-            declareVariableASTNode.name = words.get(1).replace(Constants.SEMICOLON_SYMBOL, Constants.EMPTY_SYMBOL);
+            ASTNode nameNode = new ASTNode(declareVariableASTNode, Constants.KEYWORD_NAME);
+            nameNode.name = words.get(1).replace(Constants.SEMICOLON_SYMBOL, Constants.EMPTY_SYMBOL);
+            ;
+            declareVariableASTNode.children.add(nameNode);
         } else {
-            declareVariableASTNode.name = words.get(1);
-            declareVariableASTNode.value = this.getValue(words);
+            ASTNode nameNode = new ASTNode(declareVariableASTNode, Constants.KEYWORD_NAME);
+            nameNode.name = words.get(1);
+
+            Object value = this.getValue(words);
+            String localKeyWord = getKeyWord(value.toString());
+            ASTNode valueNode = new ASTNode(declareVariableASTNode, localKeyWord);
+            valueNode.value = value;
+
+            declareVariableASTNode.children.addAll(List.of(nameNode, valueNode));
         }
     }
 
@@ -235,12 +264,16 @@ class Analyzer {
             expressionASTNode.value = words.get(equalIndex);
             expressionASTNode.keyWord = Constants.KEYWORD_EXPRESSION;
 
-            ASTNode left = new ASTNode(expressionASTNode, Constants.LEFT_VAR);
-            left.value = words.get(equalIndex - 1);
+            String value = words.get(equalIndex - 1);
+            String leftKeyWord = getKeyWord(value);
+            ASTNode left = new ASTNode(expressionASTNode, leftKeyWord);
+            left.value = value;
 
             if (((words.size() - 1) - equalIndex) == 1) {
-                ASTNode right = new ASTNode(expressionASTNode, Constants.RIGHT_VAR);
-                right.value = words.get(equalIndex + 1).replace(Constants.SEMICOLON_SYMBOL, Constants.EMPTY_SYMBOL);
+                String rightValue = words.get(equalIndex + 1).replace(Constants.SEMICOLON_SYMBOL, Constants.EMPTY_SYMBOL);
+                String rightKeyWord = getKeyWord(rightValue);
+                ASTNode right = new ASTNode(expressionASTNode, rightKeyWord);
+                right.value = rightValue;
                 expressionASTNode.children.addAll(List.of(left, right));
             } else if (((words.size() - 1) - equalIndex) == 3) {
                 List<String> rightPart = words.stream().skip(equalIndex + 1).collect(Collectors.toList());
@@ -262,7 +295,11 @@ class Analyzer {
                 if (Constants.ASSIGNER_OPERATORS.contains(detected)) {
                     expressionASTNode.value = detected;
                     expressionASTNode.keyWord = Constants.KEYWORD_EXPRESSION;
-                    expressionASTNode.name = word.substring(0, word.length() - 2);
+
+                    ASTNode variableNode = new ASTNode(expressionASTNode, Constants.KEYWORD_VARIABLE);
+                    variableNode.name = word.substring(0, word.length() - 2);
+
+                    expressionASTNode.children.add(variableNode);
                 }
             }
         }
@@ -312,5 +349,16 @@ class Analyzer {
     @NotNull
     private String getValue(@NotNull final List<String> words) {
         return words.get(words.size() - 1).replace(Constants.SEMICOLON_SYMBOL, Constants.EMPTY_SYMBOL);
+    }
+
+    @NotNull
+    private String getKeyWord(@NotNull final String value) {
+        for (int i = 0; i < value.length(); ++i) {
+            char currentChar = value.charAt(i);
+            if (!Character.isDigit(currentChar) && currentChar != '.') {
+                return Constants.KEYWORD_VARIABLE;
+            }
+        }
+        return Constants.KEYWORD_CONST;
     }
 }

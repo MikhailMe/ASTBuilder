@@ -28,7 +28,8 @@ public class ASTBuilder {
     }
 
     public void draw() {
-        new Drawer(this.build()).drawAST();
+        ASTNode ast = this.build();
+        new Drawer().drawAST(ast);
     }
 
     //  sequence: keyword -> modifiers -> type -> name -> value -> parameters -> children

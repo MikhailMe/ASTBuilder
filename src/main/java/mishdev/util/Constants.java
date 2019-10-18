@@ -29,26 +29,32 @@ public class Constants {
     public static final String BRACKET_FIGURE_OPEN = "{";
     public static final String BRACKET_FIGURE_CLOSE = "}";
 
-    public static final String LEFT_VAR = "left variable";
-    public static final String RIGHT_VAR = "right variable";
-
     public static final String TYPE_VOID = "void";
     public static final String IDENTIFIER_IF = "if";
     public static final String IDENTIFIER_FOR = "for";
     public static final String IDENTIFIER_ELSE = "else";
     public static final String IDENTIFIER_RETURN = "return";
 
-    public static final String KEYWORD_DIGRAPH = "digraph";
+    public static final String KEYWORD_BODY = "body";
+    public static final String KEYWORD_TYPE = "type";
+    public static final String KEYWORD_NAME = "name";
+    public static final String KEYWORD_CONST = "const";
     public static final String KEYWORD_LABEL = "label";
     public static final String KEYWORD_CYCLE = "cycle";
     public static final String KEYWORD_CLASS = "class";
     public static final String KEYWORD_FIELD = "field";
     public static final String KEYWORD_METHOD = "method";
     public static final String KEYWORD_PACKAGE = "package";
+    public static final String KEYWORD_DIGRAPH = "digraph";
+    public static final String KEYWORD_VARIABLE = "variable";
     public static final String KEYWORD_OPERATOR = "operator";
+    public static final String KEYWORD_MODIFIER = "modifier";
+    public static final String KEYWORD_MODIFIERS = "modifiers";
     public static final String KEYWORD_CONDITION = "condition";
     public static final String KEYWORD_PARAMETER = "parameter";
+    public static final String KEYWORD_PARAMETERS = "parameters";
     public static final String KEYWORD_EXPRESSION = "expression";
+    public static final String KEYWORD_RETURN_VALUE = "return value";
     public static final String KEYWORD_DECLARE_VARIABLE = "declare variable";
 
     public static final Set<String> ASSIGNER_OPERATORS = ImmutableSet.of(
