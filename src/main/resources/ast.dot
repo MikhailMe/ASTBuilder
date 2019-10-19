@@ -10,101 +10,102 @@ digraph{
 8[label="field :"];
 17[label="type : float"];
 18[label="name : secondField"];
+19[label="const : 789"];
 15[label="modifier : public"];
 16[label="modifier : static"];
 14[label="modifiers :"];
 13[label="field :"];
 6[label="fields :"];
-23[label="type : int"];
-24[label="name : fibonacci"];
-27[label="type : int"];
-28[label="name : n"];
-26[label="parameter :"];
-30[label="type : Boolean"];
-31[label="name : flag"];
-29[label="parameter :"];
-25[label="parameters :"];
-21[label="modifier : private"];
-22[label="modifier : static"];
-20[label="modifiers :"];
-35[label="type : int"];
-36[label="name : a"];
-37[label="const : 0"];
-34[label="declare variable :"];
-39[label="type : int"];
-40[label="name : b"];
-41[label="const : 1"];
-38[label="declare variable :"];
-43[label="type : int"];
-44[label="name : c"];
-45[label="const : 0"];
-42[label="declare variable :"];
-47[label="type : long"];
-48[label="name : variable"];
-46[label="declare variable :"];
-50[label="variable : a"];
-52[label="variable : b"];
-53[label="variable : c"];
-51[label="operator : +"];
-49[label="expression : ="];
-55[label="variable : variable"];
-56[label="const : 213"];
-54[label="expression : ="];
-60[label="variable : n"];
-61[label="const : 2"];
-59[label="operator : <"];
-63[label="type : double"];
-64[label="name : localTemp"];
-65[label="const : 1.2"];
-62[label="declare variable :"];
-67[label="return value : n"];
-66[label="return :"];
-58[label="condition : if"];
-72[label="type : int"];
-73[label="name : i"];
-74[label="const : 1"];
-71[label="declare variable :"];
-76[label="variable : i"];
-77[label="variable : n"];
-75[label="operator : <"];
-79[label="variable : i"];
-78[label="expression : ++"];
-70[label="parameters :"];
-81[label="variable : c"];
-83[label="variable : a"];
-84[label="const : 5"];
-82[label="operator : +"];
-80[label="expression : ="];
-86[label="variable : a"];
-87[label="variable : b"];
-85[label="expression : ="];
-89[label="variable : b"];
-90[label="variable : c"];
-88[label="expression : ="];
-69[label="cycle : for"];
-92[label="type : Object"];
-93[label="name : object"];
-94[label="const : 123"];
-91[label="declare variable :"];
-96[label="return value : c"];
-95[label="return :"];
-33[label="body :"];
-19[label="method :"];
-101[label="type : void"];
-102[label="name : main"];
-105[label="type : String[]"];
-106[label="name : args"];
-104[label="parameter :"];
-103[label="parameters :"];
-99[label="modifier : public"];
-100[label="modifier : static"];
-98[label="modifiers :"];
-110[label="type : int"];
-111[label="name : result"];
-112[label="variable : fibonacci(10)"];
-109[label="declare variable :"];
-108[label="body :"];
-97[label="method :"];
+24[label="type : int"];
+25[label="name : fibonacci"];
+28[label="type : int"];
+29[label="name : n"];
+27[label="parameter :"];
+31[label="type : Boolean"];
+32[label="name : flag"];
+30[label="parameter :"];
+26[label="parameters :"];
+22[label="modifier : private"];
+23[label="modifier : static"];
+21[label="modifiers :"];
+36[label="type : int"];
+37[label="name : a"];
+38[label="const : 0"];
+35[label="declare variable :"];
+40[label="type : int"];
+41[label="name : b"];
+42[label="const : 1"];
+39[label="declare variable :"];
+44[label="type : int"];
+45[label="name : c"];
+46[label="const : 0"];
+43[label="declare variable :"];
+48[label="type : long"];
+49[label="name : variable"];
+47[label="declare variable :"];
+51[label="variable : a"];
+53[label="variable : b"];
+54[label="variable : c"];
+52[label="operator : +"];
+50[label="expression : ="];
+56[label="variable : variable"];
+57[label="const : 213"];
+55[label="expression : ="];
+61[label="variable : n"];
+62[label="const : 2"];
+60[label="operator : <"];
+64[label="type : double"];
+65[label="name : localTemp"];
+66[label="const : 1.2"];
+63[label="declare variable :"];
+68[label="return value : n"];
+67[label="return :"];
+59[label="condition : if"];
+73[label="type : int"];
+74[label="name : i"];
+75[label="const : 1"];
+72[label="declare variable :"];
+77[label="variable : i"];
+78[label="variable : n"];
+76[label="operator : <"];
+80[label="variable : i"];
+79[label="expression : ++"];
+71[label="parameters :"];
+82[label="variable : c"];
+84[label="variable : a"];
+85[label="const : 5"];
+83[label="operator : +"];
+81[label="expression : ="];
+87[label="variable : a"];
+88[label="variable : b"];
+86[label="expression : ="];
+90[label="variable : b"];
+91[label="variable : c"];
+89[label="expression : ="];
+70[label="cycle : for"];
+93[label="type : Object"];
+94[label="name : object"];
+95[label="const : 123"];
+92[label="declare variable :"];
+97[label="return value : c"];
+96[label="return :"];
+34[label="body :"];
+20[label="method :"];
+102[label="type : void"];
+103[label="name : main"];
+106[label="type : String[]"];
+107[label="name : args"];
+105[label="parameter :"];
+104[label="parameters :"];
+100[label="modifier : public"];
+101[label="modifier : static"];
+99[label="modifiers :"];
+111[label="type : int"];
+112[label="name : result"];
+113[label="variable : fibonacci(10)"];
+110[label="declare variable :"];
+109[label="body :"];
+98[label="method :"];
 7[label="methods :"];
 2[label="class :"];
 0[label="package :"];
@@ -122,99 +123,100 @@ digraph{
 6 -> 13
 13 -> 17
 13 -> 18
+13 -> 19
 13 -> 14
 14 -> 15
 14 -> 16
 2 -> 7
-7 -> 19
-19 -> 23
-19 -> 24
-19 -> 25
-25 -> 26
+7 -> 20
+20 -> 24
+20 -> 25
+20 -> 26
 26 -> 27
-26 -> 28
-25 -> 29
-29 -> 30
-29 -> 31
-19 -> 20
+27 -> 28
+27 -> 29
+26 -> 30
+30 -> 31
+30 -> 32
 20 -> 21
-20 -> 22
-19 -> 33
-33 -> 34
+21 -> 22
+21 -> 23
+20 -> 34
 34 -> 35
-34 -> 36
-34 -> 37
-33 -> 38
-38 -> 39
-38 -> 40
-38 -> 41
-33 -> 42
-42 -> 43
-42 -> 44
-42 -> 45
-33 -> 46
-46 -> 47
-46 -> 48
-33 -> 49
-49 -> 50
-49 -> 51
-51 -> 52
-51 -> 53
-33 -> 54
-54 -> 55
-54 -> 56
-33 -> 58
-58 -> 59
+35 -> 36
+35 -> 37
+35 -> 38
+34 -> 39
+39 -> 40
+39 -> 41
+39 -> 42
+34 -> 43
+43 -> 44
+43 -> 45
+43 -> 46
+34 -> 47
+47 -> 48
+47 -> 49
+34 -> 50
+50 -> 51
+50 -> 52
+52 -> 53
+52 -> 54
+34 -> 55
+55 -> 56
+55 -> 57
+34 -> 59
 59 -> 60
-59 -> 61
-58 -> 62
-62 -> 63
-62 -> 64
-62 -> 65
-58 -> 66
-66 -> 67
-33 -> 69
-69 -> 70
+60 -> 61
+60 -> 62
+59 -> 63
+63 -> 64
+63 -> 65
+63 -> 66
+59 -> 67
+67 -> 68
+34 -> 70
 70 -> 71
 71 -> 72
-71 -> 73
-71 -> 74
-70 -> 75
-75 -> 76
-75 -> 77
-70 -> 78
-78 -> 79
-69 -> 80
-80 -> 81
-80 -> 82
-82 -> 83
-82 -> 84
-69 -> 85
-85 -> 86
-85 -> 87
-69 -> 88
-88 -> 89
-88 -> 90
-33 -> 91
-91 -> 92
-91 -> 93
-91 -> 94
-33 -> 95
-95 -> 96
-7 -> 97
-97 -> 101
-97 -> 102
-97 -> 103
-103 -> 104
+72 -> 73
+72 -> 74
+72 -> 75
+71 -> 76
+76 -> 77
+76 -> 78
+71 -> 79
+79 -> 80
+70 -> 81
+81 -> 82
+81 -> 83
+83 -> 84
+83 -> 85
+70 -> 86
+86 -> 87
+86 -> 88
+70 -> 89
+89 -> 90
+89 -> 91
+34 -> 92
+92 -> 93
+92 -> 94
+92 -> 95
+34 -> 96
+96 -> 97
+7 -> 98
+98 -> 102
+98 -> 103
+98 -> 104
 104 -> 105
-104 -> 106
-97 -> 98
+105 -> 106
+105 -> 107
 98 -> 99
-98 -> 100
-97 -> 108
-108 -> 109
+99 -> 100
+99 -> 101
+98 -> 109
 109 -> 110
-109 -> 111
-109 -> 112
+110 -> 111
+110 -> 112
+110 -> 113
 
 }

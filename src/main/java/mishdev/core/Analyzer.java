@@ -94,6 +94,7 @@ class Analyzer {
                 .filter(word -> !word.isEmpty())
                 .collect(Collectors.toList());
         ASTNode fieldModifiers = new ASTNode(fieldASTNode, Constants.KEYWORD_MODIFIERS);
+        String previousWord = "";
         for (String currentWord : words) {
             if (currentWord.isEmpty()) {
                 continue;
@@ -111,7 +112,12 @@ class Analyzer {
                 ASTNode nameFieldNode = new ASTNode(fieldASTNode, Constants.KEYWORD_NAME);
                 nameFieldNode.data = currentWord.replace(Constants.SEMICOLON_SYMBOL, Constants.EMPTY_SYMBOL);
                 fieldASTNode.children.add(nameFieldNode);
+            } else if (previousWord.equals(Constants.EQUAL_SYMBOL)) {
+                String data = currentWord.replace(Constants.SEMICOLON_SYMBOL, Constants.EMPTY_SYMBOL);
+                ASTNode valueFieldNode = new ASTNode(fieldASTNode, data, Constants.KEYWORD_CONST);
+                fieldASTNode.children.add(valueFieldNode);
             }
+            previousWord = currentWord;
         }
         fieldASTNode.children.add(fieldModifiers);
         return fieldASTNode;
