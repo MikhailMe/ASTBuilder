@@ -33,30 +33,18 @@ public class ASTBuilder {
     }
 
     //  sequence: keyword -> modifiers -> type -> name -> value -> parameters -> children
-    private void traversalAST(final ASTNode ASTNode, int tabIndex) {
+    private void traversalAST(final ASTNode node, int tabIndex) {
         System.out.println(Constants.NEXT_STRING_SYMBOL);
-        if (ASTNode != null) {
-            if (ASTNode.keyWord != null) {
-                System.out.print(this.generateStringWithTab(ASTNode.keyWord + ": ", tabIndex));
+        if (node != null) {
+            if (node.keyWord != null) {
+                System.out.print(this.generateStringWithTab(node.keyWord + ": ", tabIndex));
             }
-            if (ASTNode.modifiers != null && !ASTNode.modifiers.isEmpty()) {
-                ASTNode.modifiers.forEach(modifier ->
-                        System.out.print(modifier + Constants.SPACE_SYMBOL));
+            if (node.data != null) {
+                System.out.print(node.data + Constants.SPACE_SYMBOL);
             }
-            if (ASTNode.type != null) {
-                System.out.print(ASTNode.type + Constants.SPACE_SYMBOL);
-            }
-
-            if (ASTNode.value != null) {
-                System.out.print(ASTNode.value + Constants.SPACE_SYMBOL);
-            }
-            if (ASTNode.parameters != null && !ASTNode.parameters.isEmpty()) {
-                final int parametersTabIndex = ++tabIndex;
-                ASTNode.parameters.forEach(param -> this.traversalAST(param, parametersTabIndex));
-            }
-            if (ASTNode.children != null && !ASTNode.children.isEmpty()) {
+            if (node.children != null && !node.children.isEmpty()) {
                 final int childrenTabIndex = ++tabIndex;
-                ASTNode.children.forEach(child -> this.traversalAST(child, childrenTabIndex));
+                node.children.forEach(child -> this.traversalAST(child, childrenTabIndex));
             }
         }
     }

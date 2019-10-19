@@ -4,6 +4,8 @@ public class Main {
 
     private int classField;
 
+    public static float secondField = 789;
+
     private static int fibonacci(int n, Boolean flag) {
         int a = 0;
         int b = 1;

@@ -43,7 +43,9 @@ public class Constants {
     public static final String KEYWORD_CYCLE = "cycle";
     public static final String KEYWORD_CLASS = "class";
     public static final String KEYWORD_FIELD = "field";
+    public static final String KEYWORD_FIELDS = "fields";
     public static final String KEYWORD_METHOD = "method";
+    public static final String KEYWORD_METHODS = "methods";
     public static final String KEYWORD_PACKAGE = "package";
     public static final String KEYWORD_DIGRAPH = "digraph";
     public static final String KEYWORD_VARIABLE = "variable";

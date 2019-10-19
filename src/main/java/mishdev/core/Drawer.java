@@ -49,24 +49,8 @@ class Drawer {
         if (node != null) {
             final long dotId = node.id;
             List<String> label = new ArrayList<>(List.of(node.keyWord, Constants.COLON_SYMBOL));
-            if (node.modifiers != null && !node.modifiers.isEmpty()) {
-                label.addAll(node.modifiers);
-            }
-            if (node.type != null) {
-                label.add(node.type);
-            }
-            if (node.name != null) {
-                label.add(node.name);
-            }
-            if (node.value != null) {
-                String value = node.value.toString();
-                label.add(value);
-            }
-            if (node.parameters != null && !node.parameters.isEmpty()) {
-                node.parameters.forEach(param -> {
-                    links.add(ImmutablePair.of(String.valueOf(dotId), String.valueOf(param.id)));
-                    prepareDrawingData(param, links, dots);
-                });
+            if (node.data != null) {
+                label.add(node.data);
             }
             if (node.children != null && !node.children.isEmpty()) {
                 node.children.forEach(child -> {
@@ -99,18 +83,16 @@ class Drawer {
     private String generateDeclareString(@NotNull final List<Pair<Long, List<String>>> dots) {
         StringBuilder sb = new StringBuilder();
 
-        dots.forEach(dot -> {
-            sb.append(dot.getLeft())
-                    .append(Constants.BRACKET_SQUARE_OPEN)
-                    .append(Constants.KEYWORD_LABEL)
-                    .append(Constants.EQUAL_SYMBOL)
-                    .append(Constants.QUOTE_SYMBOL)
-                    .append(String.join(Constants.SPACE_SYMBOL, dot.getRight()))
-                    .append(Constants.QUOTE_SYMBOL)
-                    .append(Constants.BRACKET_SQUARE_CLOSE)
-                    .append(Constants.SEMICOLON_SYMBOL)
-                    .append(Constants.NEXT_STRING_SYMBOL);
-        });
+        dots.forEach(dot -> sb.append(dot.getLeft())
+                .append(Constants.BRACKET_SQUARE_OPEN)
+                .append(Constants.KEYWORD_LABEL)
+                .append(Constants.EQUAL_SYMBOL)
+                .append(Constants.QUOTE_SYMBOL)
+                .append(String.join(Constants.SPACE_SYMBOL, dot.getRight()))
+                .append(Constants.QUOTE_SYMBOL)
+                .append(Constants.BRACKET_SQUARE_CLOSE)
+                .append(Constants.SEMICOLON_SYMBOL)
+                .append(Constants.NEXT_STRING_SYMBOL));
 
         return sb.toString();
     }
@@ -119,14 +101,12 @@ class Drawer {
     private String generateLinksString(@NotNull final List<Pair<String, String>> links) {
         StringBuilder sb = new StringBuilder();
 
-        links.forEach(link -> {
-            sb.append(link.getLeft())
-                    .append(Constants.SPACE_SYMBOL)
-                    .append(Constants.ARROW_SYMBOL)
-                    .append(Constants.SPACE_SYMBOL)
-                    .append(link.getRight())
-                    .append(Constants.NEXT_STRING_SYMBOL);
-        });
+        links.forEach(link -> sb.append(link.getLeft())
+                .append(Constants.SPACE_SYMBOL)
+                .append(Constants.ARROW_SYMBOL)
+                .append(Constants.SPACE_SYMBOL)
+                .append(link.getRight())
+                .append(Constants.NEXT_STRING_SYMBOL));
 
         return sb.toString();
     }
