@@ -17,6 +17,7 @@ public class Constants {
     public static final String EQUAL_SYMBOL = "=";
     public static final String QUOTE_SYMBOL = "\"";
     public static final String ARROW_SYMBOL = "->";
+    public static final String TAB_SYMBOL = "    ";
     public static final String SEMICOLON_SYMBOL = ";";
     public static final String NEXT_STRING_SYMBOL = "\n";
 
@@ -32,7 +33,6 @@ public class Constants {
     public static final String TYPE_VOID = "void";
     public static final String IDENTIFIER_IF = "if";
     public static final String IDENTIFIER_FOR = "for";
-    public static final String IDENTIFIER_ELSE = "else";
     public static final String IDENTIFIER_RETURN = "return";
 
     public static final String KEYWORD_BODY = "body";
@@ -58,6 +58,7 @@ public class Constants {
     public static final String KEYWORD_EXPRESSION = "expression";
     public static final String KEYWORD_RETURN_VALUE = "return value";
     public static final String KEYWORD_DECLARE_VARIABLE = "declare variable";
+    public static final String KEYWORD_CYCLE_PARAMETERS = "cycle parameters";
 
     public static final Set<String> ASSIGNER_OPERATORS = ImmutableSet.of(
             "++", "--", "+=", "-=", "*=", "/=");

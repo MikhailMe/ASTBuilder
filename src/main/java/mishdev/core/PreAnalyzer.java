@@ -32,7 +32,9 @@ class PreAnalyzer {
                 classNode.children.add(nameNode);
             }
         }
-        classNode.children.add(classModifiers);
+        if (!classModifiers.children.isEmpty()) {
+            classNode.children.add(classModifiers);
+        }
     }
 
     @NotNull
@@ -75,7 +77,9 @@ class PreAnalyzer {
                 }
             }
         }
-        methodASTNode.children.add(methodModifiers);
+        if (!methodModifiers.children.isEmpty()) {
+            methodASTNode.children.add(methodModifiers);
+        }
         return methodASTNode;
     }
 
@@ -83,7 +87,6 @@ class PreAnalyzer {
     private ASTNode analyzeMethodParameters(@NotNull final List<String> words,
                                             @NotNull final ASTNode methodASTNode) {
         ASTNode parametersNode = new ASTNode(methodASTNode, Constants.KEYWORD_PARAMETERS);
-
         List<ASTNode> parameters = new ArrayList<>();
         ASTNode parameter = null;
         for (String currentWord : words) {
@@ -117,7 +120,6 @@ class PreAnalyzer {
         }
 
         parametersNode.children.addAll(parameters);
-
         return parametersNode;
     }
 }

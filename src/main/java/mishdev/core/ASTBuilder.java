@@ -53,7 +53,7 @@ public class ASTBuilder {
     private String generateStringWithTab(@NotNull final String string, final int n) {
         StringBuilder sb = new StringBuilder();
         for (int i = 0; i < n; i++) {
-            sb.append("    ");
+            sb.append(Constants.TAB_SYMBOL);
         }
         sb.append(string);
         return sb.toString();

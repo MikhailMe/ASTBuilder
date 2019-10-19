@@ -2,6 +2,13 @@ package mishdev;
 
 public class Main {
 
+    public static void foo() {
+        int sum = 0;
+        for (int j = 123; j > 0; j--) {
+            sum = sum + j;
+        }
+    }
+
     private int classField;
 
     public static float secondField = 789;
@@ -27,6 +34,9 @@ public class Main {
     }
 
     public static void main(String[] args) {
-        int result = fibonacci(10);
+        int result = fibonacci(10, true);
     }
+
+    short oneMoreField;
+
 }

@@ -10,7 +10,6 @@ import java.util.List;
 import java.util.function.BiFunction;
 import java.util.stream.Collectors;
 
-// FIXME: add body block to cycle and condition
 class Analyzer {
 
     @NotNull
@@ -62,7 +61,6 @@ class Analyzer {
         ASTNode methodNodes = new ASTNode(classASTNode, Constants.KEYWORD_METHODS);
         for (int index = diapason.left + 1; index < diapason.right; index++) {
             String classLine = programText.get(index);
-            // method detect
             if (classLine.contains(Constants.BRACKET_FIGURE_OPEN)
                     && classLine.contains(Constants.BRACKET_ROUND_OPEN)
                     && classLine.contains(Constants.BRACKET_ROUND_CLOSE)) {
@@ -73,9 +71,7 @@ class Analyzer {
                 methodASTNode.children.add(methodBodyNode);
                 index = methodDiapason.right;
                 methodNodes.children.add(methodASTNode);
-            }
-            // field detect
-            else if (classLine.contains(Constants.SEMICOLON_SYMBOL)) {
+            } else if (classLine.contains(Constants.SEMICOLON_SYMBOL)) {
                 ASTNode fieldNode = analyzeField(classASTNode, classLine);
                 fieldNodes.children.add(fieldNode);
             }
@@ -84,7 +80,6 @@ class Analyzer {
         classASTNode.children.add(methodNodes);
     }
 
-    // FIXME: add support default value
     @NotNull
     private ASTNode analyzeField(@NotNull final ASTNode classASTNode,
                                  @NotNull final String classLine) {
@@ -94,7 +89,7 @@ class Analyzer {
                 .filter(word -> !word.isEmpty())
                 .collect(Collectors.toList());
         ASTNode fieldModifiers = new ASTNode(fieldASTNode, Constants.KEYWORD_MODIFIERS);
-        String previousWord = "";
+        String previousWord = Constants.EMPTY_SYMBOL;
         for (String currentWord : words) {
             if (currentWord.isEmpty()) {
                 continue;
@@ -119,11 +114,13 @@ class Analyzer {
             }
             previousWord = currentWord;
         }
-        fieldASTNode.children.add(fieldModifiers);
+        if (!fieldModifiers.children.isEmpty()) {
+            fieldASTNode.children.add(fieldModifiers);
+        }
         return fieldASTNode;
     }
 
-    private void analyzeBlock(@NotNull final ASTNode blockASTNode,
+    private void analyzeBlock(@NotNull final ASTNode blockNode,
                               @NotNull final ImmutablePair<Integer, Integer> diapason) {
         for (int index = diapason.left; index < diapason.right; index++) {
             String methodLine = programText.get(index);
@@ -132,15 +129,15 @@ class Analyzer {
                     .filter(x -> !x.isEmpty())
                     .collect(Collectors.toList());
 
-            ASTNode node = new ASTNode(blockASTNode);
+            ASTNode node = new ASTNode(blockNode);
             if (checker.isDeclareVariable(lineWords)) {
                 analyzeDeclareVariable(node, lineWords);
             } else if (checker.isExpression(lineWords)) {
                 analyzeExpression(node, lineWords);
             } else if (checker.isConditionStatement(lineWords)) {
-                index = analyze(index, blockASTNode, lineWords, this::preAnalyzeConditionStatement);
+                index = analyze(index, blockNode, lineWords, this::preAnalyzeConditionStatement);
             } else if (checker.isCycleFor(lineWords)) {
-                index = analyze(index, blockASTNode, lineWords, this::preAnalyzeCycle);
+                index = analyze(index, blockNode, lineWords, this::preAnalyzeCycle);
             } else if (checker.isReturn(lineWords)) {
                 node.keyWord = Constants.IDENTIFIER_RETURN;
                 ASTNode returnValue = new ASTNode(node, Constants.KEYWORD_RETURN_VALUE);
@@ -148,7 +145,7 @@ class Analyzer {
                 node.children.add(returnValue);
             }
             if (node.isUsed()) {
-                blockASTNode.children.add(node);
+                blockNode.children.add(node);
             }
         }
     }
@@ -166,7 +163,7 @@ class Analyzer {
         String cycleBody = cycleString.substring(firstIndex + 1, lastIndex);
         String[] tokens = cycleBody.split(Constants.SEMICOLON_SYMBOL);
 
-        ASTNode cycleParameters = new ASTNode(cycleASTNode, Constants.KEYWORD_PARAMETERS);
+        ASTNode cycleParameters = new ASTNode(cycleASTNode, Constants.KEYWORD_CYCLE_PARAMETERS);
         for (String token : tokens) {
             ASTNode childASTNode = new ASTNode(cycleASTNode);
             analyzeToken(childASTNode, Arrays
@@ -183,7 +180,6 @@ class Analyzer {
     private ASTNode preAnalyzeConditionStatement(@NotNull final ASTNode blockASTNode,
                                                  @NotNull final List<String> words) {
         ASTNode simpleConditionASTNode = new ASTNode(blockASTNode, Constants.IDENTIFIER_IF, Constants.KEYWORD_CONDITION);
-
         String conditionString = String.join(Constants.SPACE_SYMBOL, words);
         int firstIndex = conditionString.indexOf(Constants.BRACKET_ROUND_OPEN);
         int lastIndex = conditionString.lastIndexOf(Constants.BRACKET_ROUND_CLOSE);
@@ -284,22 +280,17 @@ class Analyzer {
                 getConditionChildren(right, rightPart);
                 expressionASTNode.children.addAll(List.of(left, right));
             }
-        }
-        // Assigner operations
-        else {
-            // INC or DEC
-            if (words.size() == 1) {
-                String word = words.get(0);
-                String detected = word.substring(word.length() - 2);
-                if (Constants.ASSIGNER_OPERATORS.contains(detected)) {
-                    expressionASTNode.data = detected;
-                    expressionASTNode.keyWord = Constants.KEYWORD_EXPRESSION;
+        } else if (words.size() == 1) {
+            String word = words.get(0);
+            String detected = word.substring(word.length() - 2);
+            if (Constants.ASSIGNER_OPERATORS.contains(detected)) {
+                expressionASTNode.data = detected;
+                expressionASTNode.keyWord = Constants.KEYWORD_OPERATOR;
 
-                    String data = word.substring(0, word.length() - 2);
-                    ASTNode variableNode = new ASTNode(expressionASTNode, data, Constants.KEYWORD_VARIABLE);
+                String data = word.substring(0, word.length() - 2);
+                ASTNode variableNode = new ASTNode(expressionASTNode, data, Constants.KEYWORD_VARIABLE);
 
-                    expressionASTNode.children.add(variableNode);
-                }
+                expressionASTNode.children.add(variableNode);
             }
         }
     }
@@ -310,7 +301,9 @@ class Analyzer {
                         @NotNull BiFunction<ASTNode, List<String>, ASTNode> preAnalyze) {
         ImmutablePair<Integer, Integer> diapason = this.calculateDiapason(index, programText);
         ASTNode node = preAnalyze.apply(blockASTNode, words);
-        analyzeBlock(node, ImmutablePair.of(diapason.left + 1, diapason.right));
+        ASTNode bodyNode = new ASTNode(node, Constants.KEYWORD_BODY);
+        analyzeBlock(bodyNode, ImmutablePair.of(diapason.left + 1, diapason.right));
+        node.children.add(bodyNode);
         blockASTNode.children.add(node);
         return diapason.right;
     }
