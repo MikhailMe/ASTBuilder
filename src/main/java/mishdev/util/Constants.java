@@ -66,6 +66,9 @@ public class Constants {
     public static final Set<String> COMPARISON_OPERATORS = ImmutableSet.of(
             "==", "<", ">", "!=", "<=", ">=");
 
+    public static final Set<String> ARITHMETIC_OPERATORS = ImmutableSet.of(
+            "+", "-", "*", "/");
+
     public static final Set<String> MODIFIERS = ImmutableSet.of(
             "final", "static", "public", "private", "protected");
 

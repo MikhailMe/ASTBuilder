@@ -34,7 +34,7 @@ public class Main {
     }
 
     public static void main(String[] args) {
-        int result = fibonacci(10, true);
+        int result = fibonacci(10,true);
     }
 
     short oneMoreField;

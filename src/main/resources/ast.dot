@@ -135,7 +135,7 @@ digraph{
 130[label="modifiers :"];
 142[label="type : int"];
 143[label="name : result"];
-144[label="variable : true)"];
+144[label="variable : fibonacci(10,true)"];
 141[label="declare variable :"];
 140[label="body :"];
 129[label="method :"];
