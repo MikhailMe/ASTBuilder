@@ -108,9 +108,7 @@ class Analyzer {
                 fieldASTNode.children.add(typeFieldNode);
             } else if (!Constants.PRIMITIVE_TYPES.contains(currentWord)
                     && Character.isLowerCase(currentWord.charAt(0))) {
-                ASTNode nameFieldNode = new ASTNode(fieldASTNode, Constants.KEYWORD_NAME);
-                nameFieldNode.data = currentWord.replace(Constants.SEMICOLON_SYMBOL, Constants.EMPTY_SYMBOL);
-                fieldASTNode.children.add(nameFieldNode);
+                fieldASTNode.name = currentWord.replace(Constants.SEMICOLON_SYMBOL, Constants.EMPTY_SYMBOL);
             } else if (previousWord.equals(Constants.EQUAL_SYMBOL)) {
                 String data = currentWord.replace(Constants.SEMICOLON_SYMBOL, Constants.EMPTY_SYMBOL);
                 ASTNode valueFieldNode = new ASTNode(fieldASTNode, data, Constants.KEYWORD_CONST);
@@ -238,14 +236,9 @@ class Analyzer {
         declareVariableNode.children.add(typeNode);
 
         if (words.get(1).contains(Constants.SEMICOLON_SYMBOL)) {
-            ASTNode nameNode = new ASTNode(declareVariableNode, Constants.KEYWORD_NAME);
-            nameNode.data = words.get(1).replace(Constants.SEMICOLON_SYMBOL, Constants.EMPTY_SYMBOL);
-
-            declareVariableNode.children.add(nameNode);
+            declareVariableNode.name = words.get(1).replace(Constants.SEMICOLON_SYMBOL, Constants.EMPTY_SYMBOL);
         } else {
-            String nameNodeData = words.get(1);
-            ASTNode nameNode = new ASTNode(declareVariableNode, nameNodeData, Constants.KEYWORD_NAME);
-            declareVariableNode.children.add(nameNode);
+            declareVariableNode.name = words.get(1);
             this.createChild(declareVariableNode, this.getValue(words));
         }
     }
@@ -255,7 +248,7 @@ class Analyzer {
         if (words.contains(Constants.EQUAL_SYMBOL)) {
             int equalIndex = words.indexOf(Constants.EQUAL_SYMBOL);
             expressionNode.data = words.get(equalIndex);
-            expressionNode.keyWord = Constants.KEYWORD_EXPRESSION;
+            expressionNode.keyWord = Constants.KEYWORD_ASSIGNMENT;
             this.createChild(expressionNode, words.get(0));
             analyzeInnerExpression(expressionNode, words);
         } else if (words.size() == 1) {

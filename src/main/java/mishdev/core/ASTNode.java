@@ -13,14 +13,14 @@ public class ASTNode {
     public List<ASTNode> children;
 
     public long id;
+    public String name;
     public String data;
     public String keyWord;
 
     private static long nodeId = -1;
 
     private long incrementId() {
-        ++nodeId;
-        return nodeId;
+        return ++nodeId;
     }
 
     ASTNode() {
@@ -61,6 +61,7 @@ public class ASTNode {
     @Override
     public String toString() {
         return "AST:\n" +
+                "name: " + name + "\n" +
                 "data: " + data + "\n" +
                 "keyword: " + keyWord;
     }

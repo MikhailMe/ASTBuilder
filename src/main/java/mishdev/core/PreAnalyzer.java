@@ -14,9 +14,7 @@ class PreAnalyzer {
     ASTNode preAnalyzePackage(@NotNull final List<String> words) {
         ASTNode packageASTNode = new ASTNode();
         packageASTNode.keyWord = words.get(0);
-        String data = words.get(1).replace(Constants.SEMICOLON_SYMBOL, Constants.EMPTY_SYMBOL);
-        ASTNode packageNameNode = new ASTNode(packageASTNode, data, Constants.KEYWORD_NAME);
-        packageASTNode.children.add(packageNameNode);
+        packageASTNode.name = words.get(1).replace(Constants.SEMICOLON_SYMBOL, Constants.EMPTY_SYMBOL);;
         return packageASTNode;
     }
 
@@ -28,8 +26,7 @@ class PreAnalyzer {
                 ASTNode modifier = new ASTNode(classModifiers, currentWord, Constants.KEYWORD_MODIFIER);
                 classModifiers.children.add(modifier);
             } else if (!currentWord.equals(Constants.BRACKET_FIGURE_OPEN) && !currentWord.equals(Constants.KEYWORD_CLASS)) {
-                ASTNode nameNode = new ASTNode(classModifiers, currentWord, Constants.KEYWORD_NAME);
-                classNode.children.add(nameNode);
+                classNode.name = currentWord;
             }
         }
         if (!classModifiers.children.isEmpty()) {
@@ -63,9 +60,7 @@ class PreAnalyzer {
                     && Character.isLowerCase(currentWord.charAt(0))) {
                 if (currentWord.contains(Constants.BRACKET_ROUND_OPEN)) {
                     int bracketIndex = currentWord.indexOf(Constants.BRACKET_ROUND_OPEN);
-                    String data = currentWord.substring(0, bracketIndex);
-                    ASTNode nameNode = new ASTNode(methodASTNode, data, Constants.KEYWORD_NAME);
-                    methodASTNode.children.add(nameNode);
+                    methodASTNode.name = currentWord.substring(0, bracketIndex);
                     if (!currentWord.contains(Constants.BRACKET_ROUND_CLOSE)) {
                         ASTNode methodParameters = analyzeMethodParameters(words
                                 .stream()
@@ -104,13 +99,9 @@ class PreAnalyzer {
                 ASTNode parameterType = new ASTNode(parameter, currentWord, Constants.KEYWORD_TYPE);
                 parameter.children.add(parameterType);
             } else if (currentWord.contains(Constants.COMMA_SYMBOL)) {
-                String data = currentWord.substring(0, currentWord.indexOf(Constants.COMMA_SYMBOL));
-                ASTNode parameterName = new ASTNode(parameter, data, Constants.KEYWORD_NAME);
-                parameter.children.add(parameterName);
+                parameter.name = currentWord.substring(0, currentWord.indexOf(Constants.COMMA_SYMBOL));
             } else if (currentWord.contains(Constants.BRACKET_ROUND_CLOSE)) {
-                String data = currentWord.substring(0, currentWord.indexOf(Constants.BRACKET_ROUND_CLOSE));
-                ASTNode parameterName = new ASTNode(parameter, data, Constants.KEYWORD_NAME);
-                parameter.children.add(parameterName);
+                parameter.name = currentWord.substring(0, currentWord.indexOf(Constants.BRACKET_ROUND_CLOSE));
             }
 
             if (parameter.children != null && parameter.children.size() == 2) {

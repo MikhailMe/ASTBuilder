@@ -18,8 +18,20 @@ import java.util.List;
 
 class Drawer {
 
+    @NotNull
+    private List<Pair<String, String>> links;
+
+    @NotNull
+    private List<Pair<Long, List<String>>> dots;
+
+    Drawer() {
+        this.links = new ArrayList<>();
+        this.dots = new ArrayList<>();
+    }
+
     void drawAST(@NotNull final ASTNode ast) {
-        this.createDotFileByAST(ast);
+        this.prepareDrawingData(ast);
+        this.generateASTDotFile();
         try {
             MutableGraph graph = Parser.read(new File(Constants.DOT_FILE_LOCATION));
             Graphviz
@@ -33,43 +45,33 @@ class Drawer {
         }
     }
 
-    private void createDotFileByAST(@NotNull final ASTNode ast) {
-        List<Pair<Long, List<String>>> dots = new ArrayList<>();
-        List<Pair<String, String>> links = new ArrayList<>();
-        this.prepareDrawingData(ast, links, dots);
-
-        String declareString = generateDeclareString(dots);
-        String linksString = generateLinksString(links);
-        this.generateASTDotFile(declareString, linksString);
-    }
-
-    private void prepareDrawingData(final ASTNode node,
-                                    List<Pair<String, String>> links,
-                                    List<Pair<Long, List<String>>> dots) {
+    private void prepareDrawingData(final ASTNode node) {
         if (node != null) {
             final long dotId = node.id;
-            List<String> label = new ArrayList<>(List.of(node.keyWord, Constants.COLON_SYMBOL));
+            List<String> label = new ArrayList<>(List.of(node.keyWord));
             if (node.data != null) {
                 label.add(node.data);
+            }
+            if (node.name != null) {
+                label.add(node.name);
             }
             if (node.children != null && !node.children.isEmpty()) {
                 node.children.forEach(child -> {
                     links.add(ImmutablePair.of(String.valueOf(dotId), String.valueOf(child.id)));
-                    prepareDrawingData(child, links, dots);
+                    prepareDrawingData(child);
                 });
             }
             dots.add(ImmutablePair.of(dotId, label));
         }
     }
 
-    private void generateASTDotFile(@NotNull final String declareString,
-                                    @NotNull final String linksString) {
+    private void generateASTDotFile() {
         StringBuilder sb = new StringBuilder();
         sb.append(Constants.KEYWORD_DIGRAPH)
                 .append(Constants.BRACKET_FIGURE_OPEN)
                 .append(Constants.NEXT_STRING_SYMBOL)
-                .append(declareString)
-                .append(linksString)
+                .append(generateDeclareString())
+                .append(generateLinksString())
                 .append(Constants.NEXT_STRING_SYMBOL)
                 .append(Constants.BRACKET_FIGURE_CLOSE);
         try {
@@ -80,7 +82,7 @@ class Drawer {
     }
 
     @NotNull
-    private String generateDeclareString(@NotNull final List<Pair<Long, List<String>>> dots) {
+    private String generateDeclareString() {
         StringBuilder sb = new StringBuilder();
 
         dots.forEach(dot -> sb.append(dot.getLeft())
@@ -98,7 +100,7 @@ class Drawer {
     }
 
     @NotNull
-    private String generateLinksString(@NotNull final List<Pair<String, String>> links) {
+    private String generateLinksString() {
         StringBuilder sb = new StringBuilder();
 
         links.forEach(link -> sb.append(link.getLeft())

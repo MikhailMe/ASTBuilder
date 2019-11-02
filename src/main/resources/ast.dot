@@ -1,288 +1,112 @@
 digraph{
-1[label="name : mishdev"];
-5[label="name : Main"];
-4[label="modifier : public"];
-3[label="modifiers :"];
-40[label="type : int"];
-41[label="name : classField"];
-39[label="modifier : private"];
-38[label="modifiers :"];
-37[label="field :"];
-46[label="type : float"];
-47[label="name : secondField"];
-48[label="const : 789"];
-44[label="modifier : public"];
-45[label="modifier : static"];
-43[label="modifiers :"];
-42[label="field :"];
-147[label="type : short"];
-148[label="name : oneMoreField"];
-145[label="field :"];
-6[label="fields :"];
-12[label="type : void"];
-13[label="name : foo"];
-10[label="modifier : public"];
-11[label="modifier : static"];
-9[label="modifiers :"];
-16[label="type : int"];
-17[label="name : sum"];
-18[label="const : 0"];
-15[label="declare variable :"];
-23[label="type : int"];
-24[label="name : j"];
-25[label="const : 123"];
-22[label="declare variable :"];
-27[label="variable : j"];
-28[label="const : 0"];
-26[label="operator : >"];
-30[label="variable : j"];
-29[label="operator : --"];
-21[label="cycle parameters :"];
-33[label="variable : sum"];
-35[label="variable : sum"];
-36[label="variable : j"];
-34[label="operator : +"];
-32[label="expression : ="];
-31[label="body :"];
-20[label="cycle : for"];
-14[label="body :"];
-8[label="method :"];
-53[label="type : int"];
-54[label="name : fibonacci"];
-57[label="type : int"];
-58[label="name : n"];
-56[label="parameter :"];
-60[label="type : Boolean"];
-61[label="name : flag"];
-59[label="parameter :"];
-55[label="parameters :"];
-51[label="modifier : private"];
-52[label="modifier : static"];
-50[label="modifiers :"];
-65[label="type : int"];
-66[label="name : a"];
-67[label="const : 0"];
-64[label="declare variable :"];
-69[label="type : int"];
-70[label="name : b"];
-71[label="const : 1"];
-68[label="declare variable :"];
-73[label="type : int"];
-74[label="name : c"];
-75[label="const : 0"];
-72[label="declare variable :"];
-77[label="type : long"];
-78[label="name : variable"];
-76[label="declare variable :"];
-80[label="variable : a"];
-82[label="variable : b"];
-83[label="variable : c"];
-81[label="operator : +"];
-79[label="expression : ="];
-85[label="variable : variable"];
-86[label="const : 213"];
-84[label="expression : ="];
-90[label="variable : n"];
-91[label="const : 2"];
-89[label="operator : <"];
-94[label="type : double"];
-95[label="name : localTemp"];
-96[label="const : 1.2"];
-93[label="declare variable :"];
-98[label="return value : n"];
-97[label="return :"];
-92[label="body :"];
-88[label="condition : if"];
-103[label="type : int"];
-104[label="name : i"];
-105[label="const : 1"];
-102[label="declare variable :"];
-107[label="variable : i"];
-108[label="variable : n"];
-106[label="operator : <"];
-110[label="variable : i"];
-109[label="operator : ++"];
-101[label="cycle parameters :"];
-113[label="variable : c"];
-115[label="variable : a"];
-116[label="const : 5"];
-114[label="operator : +"];
-112[label="expression : ="];
-118[label="variable : a"];
-119[label="variable : b"];
-117[label="expression : ="];
-121[label="variable : b"];
-122[label="variable : c"];
-120[label="expression : ="];
-111[label="body :"];
-100[label="cycle : for"];
-124[label="type : Object"];
-125[label="name : object"];
-126[label="const : 123"];
-123[label="declare variable :"];
-128[label="return value : c"];
-127[label="return :"];
-63[label="body :"];
-49[label="method :"];
-133[label="type : void"];
-134[label="name : main"];
-137[label="type : String[]"];
-138[label="name : args"];
-136[label="parameter :"];
-135[label="parameters :"];
-131[label="modifier : public"];
-132[label="modifier : static"];
-130[label="modifiers :"];
-142[label="type : int"];
-143[label="name : result"];
-144[label="variable : fibonacci(10,true)"];
-141[label="declare variable :"];
-140[label="body :"];
-129[label="method :"];
-7[label="methods :"];
-2[label="class :"];
-0[label="package :"];
+3[label="modifier public"];
+2[label="modifiers"];
+9[label="type int"];
+8[label="modifier private"];
+7[label="modifiers"];
+6[label="field classField"];
+4[label="fields"];
+14[label="type void"];
+12[label="modifier public"];
+13[label="modifier static"];
+11[label="modifiers"];
+17[label="type int"];
+16[label="declare variable sum"];
+19[label="variable sum"];
+21[label="variable sum"];
+23[label="const 3"];
+25[label="const 5"];
+27[label="variable sum"];
+28[label="const 6"];
+26[label="operator +"];
+24[label="operator +"];
+22[label="operator +"];
+20[label="operator +"];
+18[label="assignment ="];
+33[label="type int"];
+34[label="const 123"];
+32[label="declare variable j"];
+36[label="variable j"];
+37[label="const 0"];
+35[label="operator >"];
+39[label="variable j"];
+38[label="operator --"];
+31[label="cycle parameters"];
+42[label="variable sum"];
+44[label="variable sum"];
+45[label="variable j"];
+43[label="operator +"];
+41[label="assignment ="];
+49[label="variable sum"];
+50[label="const 0"];
+48[label="operator =="];
+53[label="variable sum"];
+55[label="variable sum"];
+56[label="variable j"];
+54[label="operator +"];
+52[label="assignment ="];
+51[label="body"];
+47[label="condition if"];
+40[label="body"];
+30[label="cycle for"];
+15[label="body"];
+10[label="method foo"];
+5[label="methods"];
+1[label="class Main"];
+0[label="package mishdev"];
 0 -> 1
-0 -> 2
-2 -> 5
+1 -> 2
 2 -> 3
-3 -> 4
-2 -> 6
-6 -> 37
-37 -> 40
-37 -> 41
-37 -> 38
-38 -> 39
-6 -> 42
-42 -> 46
-42 -> 47
-42 -> 48
-42 -> 43
-43 -> 44
-43 -> 45
-6 -> 145
-145 -> 147
-145 -> 148
-2 -> 7
+1 -> 4
+4 -> 6
+6 -> 9
+6 -> 7
 7 -> 8
-8 -> 12
-8 -> 13
-8 -> 9
-9 -> 10
-9 -> 11
-8 -> 14
-14 -> 15
+1 -> 5
+5 -> 10
+10 -> 14
+10 -> 11
+11 -> 12
+11 -> 13
+10 -> 15
 15 -> 16
-15 -> 17
+16 -> 17
 15 -> 18
-14 -> 20
+18 -> 19
+18 -> 20
 20 -> 21
-21 -> 22
+20 -> 22
 22 -> 23
 22 -> 24
-22 -> 25
-21 -> 26
+24 -> 25
+24 -> 26
 26 -> 27
 26 -> 28
-21 -> 29
-29 -> 30
-20 -> 31
+15 -> 30
+30 -> 31
 31 -> 32
 32 -> 33
 32 -> 34
-34 -> 35
-34 -> 36
-7 -> 49
-49 -> 53
-49 -> 54
-49 -> 55
-55 -> 56
-56 -> 57
-56 -> 58
-55 -> 59
-59 -> 60
-59 -> 61
-49 -> 50
-50 -> 51
-50 -> 52
-49 -> 63
-63 -> 64
-64 -> 65
-64 -> 66
-64 -> 67
-63 -> 68
-68 -> 69
-68 -> 70
-68 -> 71
-63 -> 72
-72 -> 73
-72 -> 74
-72 -> 75
-63 -> 76
-76 -> 77
-76 -> 78
-63 -> 79
-79 -> 80
-79 -> 81
-81 -> 82
-81 -> 83
-63 -> 84
-84 -> 85
-84 -> 86
-63 -> 88
-88 -> 89
-89 -> 90
-89 -> 91
-88 -> 92
-92 -> 93
-93 -> 94
-93 -> 95
-93 -> 96
-92 -> 97
-97 -> 98
-63 -> 100
-100 -> 101
-101 -> 102
-102 -> 103
-102 -> 104
-102 -> 105
-101 -> 106
-106 -> 107
-106 -> 108
-101 -> 109
-109 -> 110
-100 -> 111
-111 -> 112
-112 -> 113
-112 -> 114
-114 -> 115
-114 -> 116
-111 -> 117
-117 -> 118
-117 -> 119
-111 -> 120
-120 -> 121
-120 -> 122
-63 -> 123
-123 -> 124
-123 -> 125
-123 -> 126
-63 -> 127
-127 -> 128
-7 -> 129
-129 -> 133
-129 -> 134
-129 -> 135
-135 -> 136
-136 -> 137
-136 -> 138
-129 -> 130
-130 -> 131
-130 -> 132
-129 -> 140
-140 -> 141
-141 -> 142
-141 -> 143
-141 -> 144
+31 -> 35
+35 -> 36
+35 -> 37
+31 -> 38
+38 -> 39
+30 -> 40
+40 -> 41
+41 -> 42
+41 -> 43
+43 -> 44
+43 -> 45
+40 -> 47
+47 -> 48
+48 -> 49
+48 -> 50
+47 -> 51
+51 -> 52
+52 -> 53
+52 -> 54
+54 -> 55
+54 -> 56
 
 }
