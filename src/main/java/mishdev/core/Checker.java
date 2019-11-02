@@ -27,11 +27,12 @@ class Checker {
 
     boolean isExpression(@NotNull final List<String> words) {
         boolean hasArithmeticOperators = false;
-        List<String> operations = new ArrayList<>(Constants.ASSIGNER_OPERATORS);
+        List<String> operations = new ArrayList<>(Constants.UNARY_OPERATORS);
         for (int i = 0; i < words.size() && !hasArithmeticOperators; i++) {
-            for (int j = 0; j < operations.size() && !hasArithmeticOperators; j++) {
-                if (words.get(i).contains(operations.get(j))) {
+            for (String operation : operations) {
+                if (words.get(i).contains(operation)) {
                     hasArithmeticOperators = true;
+                    break;
                 }
             }
         }

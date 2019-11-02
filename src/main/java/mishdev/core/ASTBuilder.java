@@ -23,16 +23,11 @@ public class ASTBuilder {
         return this.analyzer.analyzeProgram();
     }
 
-    public void showInConsole() {
-        this.traversalAST(this.build(), 0);
-    }
-
     public void draw() {
         ASTNode ast = this.build();
         new Drawer().drawAST(ast);
     }
 
-    //  sequence: keyword -> modifiers -> type -> name -> value -> parameters -> children
     private void traversalAST(final ASTNode node, int tabIndex) {
         System.out.println(Constants.NEXT_STRING_SYMBOL);
         if (node != null) {

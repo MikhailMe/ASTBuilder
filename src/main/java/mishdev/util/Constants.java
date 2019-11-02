@@ -13,7 +13,6 @@ public class Constants {
     public static final String EMPTY_SYMBOL = "";
     public static final String SPACE_SYMBOL = " ";
     public static final String COMMA_SYMBOL = ",";
-    public static final String COLON_SYMBOL = ":";
     public static final String EQUAL_SYMBOL = "=";
     public static final String QUOTE_SYMBOL = "\"";
     public static final String ARROW_SYMBOL = "->";
@@ -59,8 +58,7 @@ public class Constants {
     public static final String KEYWORD_DECLARE_VARIABLE = "declare variable";
     public static final String KEYWORD_CYCLE_PARAMETERS = "cycle parameters";
 
-    public static final Set<String> ASSIGNER_OPERATORS = ImmutableSet.of(
-            "++", "--", "+=", "-=", "*=", "/=");
+    public static final Set<String> UNARY_OPERATORS = ImmutableSet.of("++", "--");
 
     public static final Set<String> COMPARISON_OPERATORS = ImmutableSet.of(
             "==", "<", ">", "!=", "<=", ">=");

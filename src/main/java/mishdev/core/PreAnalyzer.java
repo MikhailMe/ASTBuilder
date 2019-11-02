@@ -14,7 +14,7 @@ class PreAnalyzer {
     ASTNode preAnalyzePackage(@NotNull final List<String> words) {
         ASTNode packageASTNode = new ASTNode();
         packageASTNode.keyWord = words.get(0);
-        packageASTNode.name = words.get(1).replace(Constants.SEMICOLON_SYMBOL, Constants.EMPTY_SYMBOL);;
+        packageASTNode.name = words.get(1).replace(Constants.SEMICOLON_SYMBOL, Constants.EMPTY_SYMBOL);
         return packageASTNode;
     }
 
@@ -62,7 +62,7 @@ class PreAnalyzer {
                     int bracketIndex = currentWord.indexOf(Constants.BRACKET_ROUND_OPEN);
                     methodASTNode.name = currentWord.substring(0, bracketIndex);
                     if (!currentWord.contains(Constants.BRACKET_ROUND_CLOSE)) {
-                        ASTNode methodParameters = analyzeMethodParameters(words
+                        ASTNode methodParameters = this.analyzeMethodParameters(words
                                 .stream()
                                 .skip(index)
                                 .collect(Collectors.toList()), methodASTNode);

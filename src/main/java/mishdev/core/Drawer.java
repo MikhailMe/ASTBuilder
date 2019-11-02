@@ -58,7 +58,7 @@ class Drawer {
             if (node.children != null && !node.children.isEmpty()) {
                 node.children.forEach(child -> {
                     links.add(ImmutablePair.of(String.valueOf(dotId), String.valueOf(child.id)));
-                    prepareDrawingData(child);
+                    this.prepareDrawingData(child);
                 });
             }
             dots.add(ImmutablePair.of(dotId, label));
@@ -70,8 +70,8 @@ class Drawer {
         sb.append(Constants.KEYWORD_DIGRAPH)
                 .append(Constants.BRACKET_FIGURE_OPEN)
                 .append(Constants.NEXT_STRING_SYMBOL)
-                .append(generateDeclareString())
-                .append(generateLinksString())
+                .append(this.generateDeclareString())
+                .append(this.generateLinksString())
                 .append(Constants.NEXT_STRING_SYMBOL)
                 .append(Constants.BRACKET_FIGURE_CLOSE);
         try {
