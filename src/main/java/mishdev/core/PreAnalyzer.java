@@ -45,9 +45,6 @@ class PreAnalyzer {
         ASTNode methodModifiers = new ASTNode(methodASTNode, Constants.KEYWORD_MODIFIERS);
         for (int index = 0; index < words.size(); index++) {
             String currentWord = words.get(index);
-            if (currentWord.isEmpty()) {
-                continue;
-            }
             if (Constants.MODIFIERS.contains(currentWord)) {
                 ASTNode modifierNode = new ASTNode(methodModifiers, currentWord, Constants.KEYWORD_MODIFIER);
                 methodModifiers.children.add(modifierNode);
@@ -104,7 +101,7 @@ class PreAnalyzer {
                 parameter.name = currentWord.substring(0, currentWord.indexOf(Constants.BRACKET_ROUND_CLOSE));
             }
 
-            if (parameter.children != null && parameter.children.size() == 2) {
+            if (parameter.children != null && parameter.name != null) {
                 parameters.add(parameter);
                 parameter = null;
             }
