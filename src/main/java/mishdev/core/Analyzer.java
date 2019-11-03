@@ -37,7 +37,7 @@ class Analyzer {
         List<String> packageWords = Arrays
                 .stream(programText.get(0).split(Constants.SPACE_SYMBOL))
                 .collect(Collectors.toList());
-        if (!checker.isPackage(packageWords)) {
+        if (!checker.hasPackage(packageWords)) {
             throw new InvalidParameterException("This is not package line");
         }
         ASTNode packageASTNode = preAnalyzer.preAnalyzePackage(packageWords);
@@ -53,7 +53,7 @@ class Analyzer {
         List<String> classWords = Arrays
                 .stream(programText.get(startIndex).split(Constants.SPACE_SYMBOL))
                 .collect(Collectors.toList());
-        if (!checker.isClass(classWords)) {
+        if (!checker.hasClass(classWords)) {
             throw new InvalidParameterException("This is not class line");
         }
         preAnalyzer.preAnalyzeClass(classASTNode, classWords);
@@ -132,19 +132,24 @@ class Analyzer {
                     .collect(Collectors.toList());
 
             ASTNode node = new ASTNode(blockNode);
-            if (checker.isDeclareVariable(lineWords)) {
+            if (checker.hasDeclareVariable(lineWords)) {
                 this.analyzeDeclareVariable(node, lineWords);
-            } else if (checker.isExpression(lineWords)) {
+            } else if (checker.hasExpression(lineWords)) {
                 this.analyzeAssignment(node, lineWords);
-            } else if (checker.isConditionStatement(lineWords)) {
+            } else if (checker.hasConditionStatement(lineWords)) {
                 index = this.analyze(index, blockNode, lineWords, this::preAnalyzeConditionStatement);
-            } else if (checker.isCycleFor(lineWords)) {
+            } else if (checker.hasCycleFor(lineWords)) {
                 index = this.analyze(index, blockNode, lineWords, this::preAnalyzeCycle);
-            } else if (checker.isReturn(lineWords)) {
+            } else if (checker.hasBreak(lineWords)) {
+                node.keyWord = Constants.IDENTIFIER_BREAK;
+            } else if (checker.hasContinue(lineWords)) {
+                node.keyWord = Constants.IDENTIFIER_CONTINUE;
+            } else if (false) {
+
+            } else if (checker.hasReturn(lineWords)) {
                 node.keyWord = Constants.IDENTIFIER_RETURN;
-                ASTNode returnValue = new ASTNode(node, Constants.KEYWORD_RETURN_VALUE);
-                returnValue.data = this.getValue(lineWords);
-                node.children.add(returnValue);
+                ASTNode returnNode = new ASTNode(node, this.getValue(lineWords), Constants.KEYWORD_RETURN_VALUE);
+                node.children.add(returnNode);
             }
             if (node.isUsed()) {
                 blockNode.children.add(node);
@@ -196,11 +201,11 @@ class Analyzer {
 
     private void analyzeToken(@NotNull final ASTNode node,
                               @NotNull final List<String> words) {
-        if (checker.isDeclareVariable(words)) {
+        if (checker.hasDeclareVariable(words)) {
             this.analyzeDeclareVariable(node, words);
-        } else if (checker.isExpression(words)) {
+        } else if (checker.hasExpression(words)) {
             this.analyzeAssignment(node, words);
-        } else if (checker.isSimpleCondition(words)) {
+        } else if (checker.hasSimpleCondition(words)) {
             this.analyzeSimpleCondition(node, words, false);
         }
     }

@@ -32,7 +32,10 @@ public class Constants {
     public static final String TYPE_VOID = "void";
     public static final String IDENTIFIER_IF = "if";
     public static final String IDENTIFIER_FOR = "for";
+    public static final String IDENTIFIER_ELSE = "else";
+    public static final String IDENTIFIER_BREAK = "break";
     public static final String IDENTIFIER_RETURN = "return";
+    public static final String IDENTIFIER_CONTINUE = "continue";
 
     public static final String KEYWORD_BODY = "body";
     public static final String KEYWORD_TYPE = "type";

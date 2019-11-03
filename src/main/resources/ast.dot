@@ -10,52 +10,54 @@ digraph{
 12[label="modifier public"];
 13[label="modifier static"];
 11[label="modifiers"];
-17[label="type int"];
-20[label="const 8"];
-22[label="const 5"];
-23[label="const 10"];
-21[label="operator +"];
-19[label="operator +"];
-18[label="assignment ="];
-16[label="declare variable sum"];
+19[label="variable sum"];
+20[label="const 0"];
+18[label="operator =="];
+23[label="variable sum"];
 25[label="variable sum"];
-27[label="variable sum"];
-29[label="const 3"];
-31[label="const 5"];
-33[label="variable sum"];
-34[label="const 6"];
-32[label="operator +"];
-30[label="operator +"];
-28[label="operator +"];
-26[label="operator +"];
-24[label="assignment ="];
-39[label="type int"];
-41[label="const 123"];
-40[label="assignment ="];
-38[label="declare variable j"];
-43[label="variable j"];
-44[label="const 0"];
-42[label="operator >"];
-46[label="variable j"];
-45[label="operator --"];
-37[label="cycle parameters"];
-49[label="variable sum"];
-51[label="variable sum"];
-52[label="variable j"];
-50[label="operator +"];
-48[label="assignment ="];
-56[label="variable sum"];
-57[label="const 0"];
-55[label="operator =="];
-60[label="variable sum"];
-62[label="variable sum"];
-63[label="variable j"];
-61[label="operator +"];
-59[label="assignment ="];
-58[label="body"];
-54[label="condition if"];
-47[label="body"];
-36[label="cycle for"];
+26[label="variable j"];
+24[label="operator +"];
+22[label="assignment ="];
+27[label="continue"];
+21[label="body"];
+17[label="condition if"];
+29[label="type int"];
+32[label="const 8"];
+34[label="const 5"];
+35[label="const 10"];
+33[label="operator +"];
+31[label="operator +"];
+30[label="assignment ="];
+28[label="declare variable sum"];
+40[label="type int"];
+42[label="const 123"];
+41[label="assignment ="];
+39[label="declare variable j"];
+44[label="variable j"];
+45[label="const 0"];
+43[label="operator >"];
+47[label="variable j"];
+46[label="operator --"];
+38[label="cycle parameters"];
+50[label="variable sum"];
+52[label="variable sum"];
+53[label="variable j"];
+51[label="operator +"];
+49[label="assignment ="];
+57[label="variable sum"];
+58[label="const 0"];
+56[label="operator =="];
+61[label="variable sum"];
+63[label="variable sum"];
+64[label="variable j"];
+62[label="operator +"];
+60[label="assignment ="];
+59[label="body"];
+55[label="condition if"];
+48[label="body"];
+37[label="cycle for"];
+66[label="return value 0"];
+65[label="return"];
 15[label="body"];
 10[label="method foo"];
 5[label="methods"];
@@ -76,51 +78,53 @@ digraph{
 11 -> 12
 11 -> 13
 10 -> 15
-15 -> 16
-16 -> 17
-16 -> 18
+15 -> 17
+17 -> 18
 18 -> 19
-19 -> 20
-19 -> 21
+18 -> 20
+17 -> 21
 21 -> 22
-21 -> 23
-15 -> 24
+22 -> 23
+22 -> 24
 24 -> 25
 24 -> 26
-26 -> 27
-26 -> 28
+21 -> 27
+15 -> 28
 28 -> 29
 28 -> 30
 30 -> 31
-30 -> 32
-32 -> 33
-32 -> 34
-15 -> 36
-36 -> 37
+31 -> 32
+31 -> 33
+33 -> 34
+33 -> 35
+15 -> 37
 37 -> 38
 38 -> 39
-38 -> 40
-40 -> 41
-37 -> 42
-42 -> 43
-42 -> 44
-37 -> 45
-45 -> 46
-36 -> 47
-47 -> 48
+39 -> 40
+39 -> 41
+41 -> 42
+38 -> 43
+43 -> 44
+43 -> 45
+38 -> 46
+46 -> 47
+37 -> 48
 48 -> 49
-48 -> 50
-50 -> 51
-50 -> 52
-47 -> 54
-54 -> 55
+49 -> 50
+49 -> 51
+51 -> 52
+51 -> 53
+48 -> 55
 55 -> 56
-55 -> 57
-54 -> 58
-58 -> 59
+56 -> 57
+56 -> 58
+55 -> 59
 59 -> 60
-59 -> 61
-61 -> 62
-61 -> 63
+60 -> 61
+60 -> 62
+62 -> 63
+62 -> 64
+15 -> 65
+65 -> 66
 
 }

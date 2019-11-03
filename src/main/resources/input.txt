@@ -5,14 +5,18 @@ public class Main {
     private int classField;
 
     public static void foo() {
+        if (sum == 0) {
+            sum = sum + j;
+            continue;
+        }
         int sum = 8 + 5 + 10;
-        sum = sum + 3 + 5 + sum + 6;
         for (int j = 123; j > 0; j--) {
             sum = sum + j;
             if (sum == 0) {
                 sum = sum + j;
             }
         }
+        return 0;
     }
 
 }

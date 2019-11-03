@@ -8,24 +8,24 @@ import java.util.List;
 
 class Checker {
 
-    boolean isPackage(@NotNull final List<String> words) {
+    boolean hasPackage(@NotNull final List<String> words) {
         return words.contains(Constants.KEYWORD_PACKAGE);
     }
 
-    boolean isClass(@NotNull final List<String> words) {
+    boolean hasClass(@NotNull final List<String> words) {
         return words.contains(Constants.KEYWORD_CLASS);
     }
 
-    boolean isDeclareVariable(@NotNull final List<String> words) {
+    boolean hasDeclareVariable(@NotNull final List<String> words) {
         return (Constants.PRIMITIVE_TYPES.contains(words.get(0)) ||
                 Character.isUpperCase(words.get(0).charAt(0)));
     }
 
-    boolean isSimpleCondition(@NotNull final List<String> words) {
+    boolean hasSimpleCondition(@NotNull final List<String> words) {
         return hasElementInCollection(words) && words.size() == 3;
     }
 
-    boolean isExpression(@NotNull final List<String> words) {
+    boolean hasExpression(@NotNull final List<String> words) {
         boolean hasArithmeticOperators = false;
         List<String> operations = new ArrayList<>(Constants.UNARY_OPERATORS);
         for (int i = 0; i < words.size() && !hasArithmeticOperators; i++) {
@@ -41,17 +41,25 @@ class Checker {
                 && !words.contains(Constants.IDENTIFIER_IF);
     }
 
-    boolean isCycleFor(@NotNull final List<String> words) {
+    boolean hasCycleFor(@NotNull final List<String> words) {
         return words.contains(Constants.IDENTIFIER_FOR)
                 && hasElementInCollection(words);
     }
 
-    boolean isConditionStatement(@NotNull final List<String> words) {
+    boolean hasConditionStatement(@NotNull final List<String> words) {
         return words.contains(Constants.IDENTIFIER_IF)
                 && words.contains(Constants.BRACKET_FIGURE_OPEN);
     }
 
-    boolean isReturn(@NotNull final List<String> words) {
+    boolean hasBreak(@NotNull final List<String> words) {
+        return words.stream().anyMatch(word -> word.contains(Constants.IDENTIFIER_BREAK));
+    }
+
+    boolean hasContinue(@NotNull final List<String> words) {
+        return words.stream().anyMatch(word -> word.contains(Constants.IDENTIFIER_CONTINUE));
+    }
+
+    boolean hasReturn(@NotNull final List<String> words) {
         return words.contains(Constants.IDENTIFIER_RETURN);
     }
 
