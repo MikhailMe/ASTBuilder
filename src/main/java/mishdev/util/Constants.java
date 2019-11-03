@@ -55,6 +55,8 @@ public class Constants {
     public static final String KEYWORD_MODIFIERS = "modifiers";
     public static final String KEYWORD_CONDITION = "condition";
     public static final String KEYWORD_PARAMETER = "parameter";
+    public static final String KEYWORD_THEN_BODY = "then body";
+    public static final String KEYWORD_ELSE_BODY = "else body";
     public static final String KEYWORD_PARAMETERS = "parameters";
     public static final String KEYWORD_ASSIGNMENT = "assignment";
     public static final String KEYWORD_RETURN_VALUE = "return value";

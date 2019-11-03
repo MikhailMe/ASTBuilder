@@ -59,6 +59,11 @@ class Checker {
         return words.stream().anyMatch(word -> word.contains(Constants.IDENTIFIER_CONTINUE));
     }
 
+    boolean hasElseOperator(@NotNull final List<String> words) {
+        return words.contains(Constants.IDENTIFIER_ELSE)
+                && words.contains(Constants.BRACKET_FIGURE_OPEN);
+    }
+
     boolean hasReturn(@NotNull final List<String> words) {
         return words.contains(Constants.IDENTIFIER_RETURN);
     }

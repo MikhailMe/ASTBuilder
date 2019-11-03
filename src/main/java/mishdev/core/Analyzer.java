@@ -122,7 +122,7 @@ class Analyzer {
         return fieldASTNode;
     }
 
-    private void analyzeBlock(@NotNull final ASTNode blockNode,
+    private void analyzeBlock(@NotNull ASTNode blockNode,
                               @NotNull final ImmutablePair<Integer, Integer> diapason) {
         for (int index = diapason.left; index < diapason.right; index++) {
             String methodLine = programText.get(index);
@@ -144,8 +144,10 @@ class Analyzer {
                 node.keyWord = Constants.IDENTIFIER_BREAK;
             } else if (checker.hasContinue(lineWords)) {
                 node.keyWord = Constants.IDENTIFIER_CONTINUE;
-            } else if (false) {
-
+            } else if (checker.hasElseOperator(lineWords)) {
+                ASTNode elseBodyNode = new ASTNode(blockNode.parent, Constants.KEYWORD_ELSE_BODY);
+                blockNode.parent.children.add(elseBodyNode);
+                blockNode = elseBodyNode;
             } else if (checker.hasReturn(lineWords)) {
                 node.keyWord = Constants.IDENTIFIER_RETURN;
                 ASTNode returnNode = new ASTNode(node, this.getValue(lineWords), Constants.KEYWORD_RETURN_VALUE);
@@ -311,7 +313,9 @@ class Analyzer {
                         @NotNull BiFunction<ASTNode, List<String>, ASTNode> preAnalyze) {
         ImmutablePair<Integer, Integer> diapason = this.calculateDiapason(index, programText);
         ASTNode node = preAnalyze.apply(blockASTNode, words);
-        ASTNode bodyNode = new ASTNode(node, Constants.KEYWORD_BODY);
+        String bodyKeyWord = node.keyWord.equals(Constants.KEYWORD_CONDITION) ?
+                Constants.KEYWORD_THEN_BODY : Constants.KEYWORD_BODY;
+        ASTNode bodyNode = new ASTNode(node, bodyKeyWord);
         this.analyzeBlock(bodyNode, ImmutablePair.of(diapason.left + 1, diapason.right));
         node.children.add(bodyNode);
         blockASTNode.children.add(node);

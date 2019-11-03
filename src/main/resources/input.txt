@@ -4,17 +4,14 @@ public class Main {
 
     private int classField;
 
-    public static void foo() {
+    public static int foo(int sum) {
+        int a = 5 + 5;
         if (sum == 0) {
-            sum = sum + j;
-            continue;
-        }
-        int sum = 8 + 5 + 10;
-        for (int j = 123; j > 0; j--) {
-            sum = sum + j;
-            if (sum == 0) {
-                sum = sum + j;
+            for (int k = 100; k >= 26; k--) {
+                sum = k * a;
             }
+        } else {
+            sum = sum - a;
         }
         return 0;
     }
