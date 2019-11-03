@@ -360,7 +360,7 @@ class Analyzer {
         for (int i = 0; i < value.length(); ++i) {
             char currentChar = value.charAt(i);
             if (!Character.isDigit(currentChar) && currentChar != '.') {
-                return Constants.KEYWORD_VARIABLE;
+                return Character.isUpperCase(value.charAt(0)) ? Constants.KEYWORD_NEW : Constants.KEYWORD_VARIABLE;
             }
         }
         return Constants.KEYWORD_CONST;

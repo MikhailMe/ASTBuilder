@@ -37,6 +37,7 @@ public class Constants {
     public static final String IDENTIFIER_RETURN = "return";
     public static final String IDENTIFIER_CONTINUE = "continue";
 
+    public static final String KEYWORD_NEW = "new";
     public static final String KEYWORD_BODY = "body";
     public static final String KEYWORD_TYPE = "type";
     public static final String KEYWORD_CONST = "const";
